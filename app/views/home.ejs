@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <%- include('./partial/head') %>
+        <style>
+            body {
+                background: #141E30;
+                background: linear-gradient(to right,
+                        #141E30, #19324f);
+                height: 200vh;
+            }
+
+            .cardsss {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                max-width: 90vw;
+                height: auto;
+                margin: 4vh 10vh 0 10vh;
+                padding: 1vh;
+
+            }
+
+            .card {
+                /* Add shadows to create the "card" effect */
+                margin: 1vh 1.5vh 3vh 3vh;
+                /* height: 23rem; */
+                width: 27rem;
+                color: black;
+                padding-bottom: 4vh;
+                overflow: hidden;
+                border: 2px solid rgb(232, 229, 229);
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+                transition: 0.3s;
+                border-radius: 8px;
+                filter: blur(0.1px);
+                background: linear-gradient(to top, wheat, white, wheat);
+            }
+
+            .card:hover {
+                box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+                transform: scale(1.1);
+                filter: blur(0);
+            }
+
+            .card_container {
+                padding: 2px 16px;
+            }
+
+            .view {
+                padding: 10px 20px;
+                font-size: 1rem;
+                border-radius: 5px;
+                border: 2px solid black;
+                text-decoration: none;
+                background: rgb(163, 163, 255);
+                color: black;
+            }
+        </style>
+</head>
+
+<body>
+    <%- include('./partial/nav') %>
+
+
+
+        <div class="cardsss">
+            <%blog.forEach(element=> { %>
+                <div class="card">
+                    <div class="card_container "
+                        style="display: flex; align-items: center; justify-content: center; flex-direction: column; ">
+                        <div style="display: flex; justify-content: space-between; flex-direction: column;">
+                            <div style="height:auto;width: auto;">
+                                <img src="/uploads/<%=element.profile  %>" alt="Avatar"
+                                style="min-width: 10vw;width: 27vw; max-height:15rem; border: 5px solid black;">
+                            </div>
+                            <h3 style="width:100%; font-size: 20px;" class="mt-2"><b>
+                                    <%=element.blog_title %>
+                                </b></h3>
+                        </div>
+                        <div><a class="view mt-2" href="/home/view/blog/<%=element._id  %>">
+                                view
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <% }) %>
+
+
+                    <%- include('./partial/script') %>
+
+
+</body>
+
+</html>

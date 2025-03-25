@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .button {
+            width: 8vw;
+            height: 3vw;
+            background-color: rgb(13, 13, 118);
+            color: white;
+            text-align: center;
+            font-size: 3vh;
+        }
+    </style>
+    <%- include('./partial/head') %>
+</head>
+
+<body>
+    <%- include('./partial/nav') %>
+
+        <div>
+
+
+            <center>
+                <h1>
+                    <%=blog.blog_title %>
+                </h1>
+
+            </center>
+            <center>
+                <img src="/uploads/<%=blog.profile %>" style="width: 50px; height: 70px;">
+            </center>
+            <pre style="text-wrap: wrap; font-size: 15px;text-justify: auto; margin: 2vh 10vh;">
+                <%=blog.blog_body %>
+            </pre>
+
+        </div>
+        <form class="addcomment ms-5 me-5 mt-3 mb-5" action="/home/commentpost/<%=blog._id %>/" method="post">
+            <h3 class="ms-5">Add Comments (<%=comm.length %>)</h3>
+            <div class="form-floating mb-3 box ms-5 me-5">
+                <input type="text" class="form-control" id="floatingInput" name="Comment">
+                <label for="floatingInput">Enter Your Comment</label>
+            </div>
+
+            <button class="button ms-5" type="submit">ADD</button>
+        </form>
+        <div class="comments ms-5">
+            <%comm.forEach(element=> { %>
+                <h4 class="ms-5">
+                    <%=element.name  %>:
+                    <%=element.comment%>
+                </h4>
+                <% }) %>
+
+        </div>
+       
+        <%- include('./partial/script') %>
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+
+    </body>
+
+</html>

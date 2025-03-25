@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <%- include('./partial/head') %>
+</head>
+
+<body style=" background: linear-gradient(to top, white,wheat) ;height: 130vh;">
+    <%- include('./partial/nav') %>
+<form style="border: 2px solid black;border-radius: 2vh; height: 80vh; width: 80vw; position: absolute; top:15vh; left:10vw;background-color: white;" action="/home/addblog" method="post" enctype="multipart/form-data" >
+
+
+
+    <p class="h1 mt-1" style="text-align: center;">Add Your New Blog</p>
+
+    <div class="mb-3 mt-5 ms-5 me-5">
+        <label for="exampleFormControlInput1" class="form-label">Title</label>
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Title" name="title">
+        </div>
+        <div class="mb-3 me-5 ms-5">
+            <label for="exampleFormControlTextarea1" class="form-label">Write Blog Here</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"
+                placeholder="Tap Here To Write Blog" name="body"></textarea>
+        </div>
+
+
+        <div class="mb-5 ms-5 me-5 ">
+            <label for="formFile" class="form-label">Blog Pictures</label>
+            <input class="form-control" type="file" id="formFile" name="profile">
+        </div>
+        <button type="submit" class="btn btn-primary ms-5">Upload Blog</button>
+
+    </form>
+
+
+        <%- include('./partial/script') %>
+</body>
+
+</html>

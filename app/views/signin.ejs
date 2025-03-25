@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <%- include('./partial/head') %>
+        <style>
+            .box {
+                width: 60vw;
+            }
+
+            form {
+                width: 70vw;
+                border-radius: 2vh;
+                margin-top: 5vh;
+                background: white;
+                height: 70vh;
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                flex-direction: column;
+            }
+            
+            body {
+                background: linear-gradient(to top, rgb(2, 2, 45), blue, rgb(17, 186, 243));
+                display: flex;
+                align-items: center;
+                overflow: hidden;
+                flex-direction: column;
+                height: 100vh;
+                justify-content: center;
+                background-repeat: none;
+                /* background-color: rgb(44, 42, 42); */
+            }
+
+            button {
+                background-color: red;
+                font-size: 3vh;
+                border-radius: 10px;
+                margin-top: 3vh;
+                color: white;
+                font-weight: 700;
+                border: 2px solid red;
+            }
+        </style>
+</head>
+
+<body>
+    <form action="/user/signin" method="post">
+
+        <div>
+            <h1 style="text-align: center; margin-bottom: 3vh;color:black;">Sign In</h1>
+        </div>
+        <div>
+
+            <div class="form-floating mb-3 box">
+                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email">
+                <label for="floatingInput"><img src="/images/emailicon.jpg" alt=""
+                    style="width: 30px; margin-right: 6px;">Email address</label>
+                </div>
+                <div class="form-floating box">
+                    <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
+                    <label for="floatingPassword"><img src="/images/pass.jpeg" alt=""
+                        style="width: 20px; margin-right: 6px;">Password</label>
+                    </div>
+                </div>
+        <div style="display: flex; align-items: center; justify-self: center;">
+            <button type="submit">Sign In</button>
+        </div>
+        <div style="margin-top: 2vh;">
+            <span style="color:black; margin-right: 4px;">Dont have a account </span>
+            <a href="/user/signup">Sign Up</a>
+        </div>
+    </form>
+    <%- include('./partial/script') %>
+</body>
+
+</html>
