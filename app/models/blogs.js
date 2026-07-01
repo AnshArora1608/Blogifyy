@@ -35,7 +35,7 @@ const blogSchema = new Schema({
         type:String,
         required:true
     },
-}, { TimeStamps: true })
+}, { timeStamps: true })
 
 
 const blogs=model("blogs",blogSchema)

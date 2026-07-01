@@ -2,41 +2,1288 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <%- include('./partial/head') %>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Write a Blog | Blogify</title>
+
+<%- include('./partial/head') %>
+
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+
+/* ─── RESET & BASE ─── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:          #07111f;
+  --surface:     #0d1c30;
+  --surface2:    #112240;
+  --border:      rgba(59, 111, 212, 0.18);
+  --border-focus:rgba(59, 111, 212, 0.55);
+  --accent:      #3b6fd4;
+  --accent-glow: rgba(59, 111, 212, 0.3);
+  --accent-soft: rgba(59, 111, 212, 0.1);
+  --success:     #34d399;
+  --warn:        #f59e0b;
+  --danger:      #f87171;
+  --text:        #e8f0fe;
+  --text-mid:    rgba(180, 200, 240, 0.75);
+  --text-muted:  rgba(140, 165, 210, 0.45);
+  --serif:       'Lora', Georgia, serif;
+  --display:     'Syne', sans-serif;
+  --sans:        'DM Sans', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── AMBIENT BG ─── */
+.bg-ambient {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  overflow: hidden;
+}
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.07;
+}
+.bg-orb-1 { width: 700px; height: 700px; background: #2563eb; top: -200px; left: -200px; animation: drift 12s ease-in-out infinite; }
+.bg-orb-2 { width: 500px; height: 500px; background: #1e40af; bottom: -100px; right: -100px; animation: drift 15s ease-in-out infinite reverse; }
+.bg-orb-3 { width: 350px; height: 350px; background: #60a5fa; top: 50%; left: 55%; animation: drift 9s ease-in-out infinite 3s; }
+
+@keyframes drift {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%      { transform: translate(30px,-30px) scale(1.05); }
+  66%      { transform: translate(-20px,20px) scale(0.97); }
+}
+
+/* ─── LAYOUT WRAPPER ─── */
+.page-wrap {
+  position: relative; z-index: 1;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 48px 24px 100px;
+}
+
+/* ─── PAGE HEADER ─── */
+.page-header {
+  text-align: center;
+  margin-bottom: 44px;
+  animation: slideUp 0.6s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.page-header-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 10.5px; font-weight: 500;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.page-header-label::before,
+.page-header-label::after {
+  content: ''; display: block; width: 20px; height: 1px; background: currentColor; opacity: 0.5;
+}
+
+.page-header h1 {
+  font-family: var(--display);
+  font-size: clamp(30px, 5vw, 48px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--text);
+  line-height: 1.05;
+  margin-bottom: 12px;
+}
+.page-header h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.page-header p {
+  font-size: 15px;
+  color: var(--text-mid);
+  line-height: 1.65;
+}
+
+/* ─── PROGRESS STEPS ─── */
+.steps-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 44px;
+  animation: slideUp 0.6s 0.1s cubic-bezier(0.22,1,0.36,1) both;
+}
+.step {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  position: relative;
+}
+.step-circle {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s;
+  position: relative; z-index: 1;
+}
+.step.active .step-circle {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+.step.done .step-circle {
+  border-color: var(--success);
+  background: rgba(52,211,153,0.1);
+  color: var(--success);
+}
+.step-label {
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.step.active .step-label { color: var(--accent); }
+.step.done .step-label { color: var(--success); }
+
+.step-line {
+  flex: 1; height: 1px;
+  background: var(--border);
+  min-width: 60px; max-width: 100px;
+  margin-bottom: 18px;
+}
+
+/* ─── EDITOR CARD ─── */
+.editor-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+  animation: slideUp 0.7s 0.15s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+/* card top bar */
+.editor-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 28px;
+  background: rgba(255,255,255,0.025);
+  border-bottom: 1px solid var(--border);
+}
+.editor-topbar-dots { display: flex; gap: 7px; }
+.editor-topbar-dots span {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+.dot-r { background: #f87171; opacity: 0.7; }
+.dot-y { background: #fbbf24; opacity: 0.7; }
+.dot-g { background: #34d399; opacity: 0.7; }
+
+.editor-topbar-title {
+  font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted);
+}
+.editor-topbar-save {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--success);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.editor-topbar-save.visible { opacity: 1; }
+.save-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: blink 1.5s infinite; }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+/* card body */
+.editor-body { padding: 36px 40px; }
+@media(max-width:600px) { .editor-body { padding: 24px 20px; } }
+
+/* ─── FIELD GROUPS ─── */
+.field-group {
+  margin-bottom: 32px;
+  animation: slideUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+}
+.field-group:nth-child(1) { animation-delay: 0.2s; }
+.field-group:nth-child(2) { animation-delay: 0.28s; }
+.field-group:nth-child(3) { animation-delay: 0.36s; }
+.field-group:nth-child(4) { animation-delay: 0.44s; }
+.field-group:nth-child(5) { animation-delay: 0.52s; }
+.field-group:nth-child(6) { animation-delay: 0.6s; }
+
+.field-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 500;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-mid);
+  margin-bottom: 10px;
+}
+.field-label svg { opacity: 0.6; flex-shrink: 0; }
+.field-required {
+  margin-left: auto;
+  font-size: 10px; letter-spacing: 0;
+  color: var(--accent); opacity: 0.7;
+  text-transform: none;
+}
+
+/* ─── INPUTS ─── */
+.bfy-input, .bfy-select, .bfy-textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+
+}
+.bfy-input::placeholder, .bfy-textarea::placeholder { color: var(--text-muted); }
+.bfy-input:focus, .bfy-select:focus, .bfy-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft), 0 0 20px rgba(59,111,212,0.12);
+  background: rgba(17, 34, 64, 0.9);
+}
+
+/* char limit indicator on title */
+.title-wrap { position: relative; }
+.title-limit {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  font-size: 11px; color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* ─── SELECT ─── */
+.bfy-select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%233b6fd4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 42px;
+}
+.bfy-select option { background: #0d1c30; color: var(--text); }
+
+/* ─── CATEGORY PILLS ─── */
+.cat-pills {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-top: 12px;
+}
+.cat-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-mid);
+  font-family: var(--sans);
+  font-size: 13px; font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.cat-pill:hover { border-color: var(--accent); color: var(--text); background: var(--accent-soft); }
+.cat-pill.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.cat-pill.selected .cat-dot { background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); }
+.cat-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); transition: all 0.2s; }
+
+/* ─── TEXTAREA / WRITING AREA ─── */
+.bfy-textarea {
+  min-height: 260px;
+  resize: vertical;
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.85;
+  letter-spacing: 0.01em;
+}
+
+/* word/char counter bar */
+.counter-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 10px;
+  padding: 0 4px;
+}
+.counter-stats { display: flex; gap: 18px; }
+.counter-stat {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  display: flex; align-items: center; gap: 5px;
+}
+.counter-stat strong { color: var(--text-mid); font-weight: 500; }
+
+/* reading time */
+.read-time {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  display: flex; align-items: center; gap: 5px;
+}
+.read-time svg { opacity: 0.5; }
+
+/* ─── TAGS ─── */
+.tag-input-wrap {
+  position: relative;
+}
+.tag-hint {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  font-size: 11px; color: var(--text-muted);
+  pointer-events: none;
+  display: flex; align-items: center; gap: 5px;
+}
+.tag-hint kbd {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 10px; font-family: var(--sans);
+  color: var(--text-muted);
+}
+
+.tag-box {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  min-height: 36px;
+  margin-top: 12px;
+}
+.tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(59,111,212,0.3);
+  color: var(--accent);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px; font-weight: 500;
+  animation: tagPop 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes tagPop {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.tag-remove {
+  cursor: pointer;
+  opacity: 0.5;
+  font-size: 14px; line-height: 1;
+  transition: opacity 0.15s;
+  background: none; border: none; color: inherit;
+  padding: 0; display: flex;
+}
+.tag-remove:hover { opacity: 1; }
+.tag-count { font-size: 11px; color: var(--text-muted); align-self: center; }
+
+/* ─── IMAGE UPLOAD ─── */
+.upload-zone {
+  position: relative;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 40px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.25s, background 0.25s;
+  background: transparent;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.upload-zone input[type="file"] {
+  position: absolute; inset: 0;
+  opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.upload-icon {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  transition: all 0.25s;
+}
+.upload-zone:hover .upload-icon {
+  background: var(--accent-soft);
+  border-color: rgba(59,111,212,0.4);
+}
+.upload-icon svg { color: var(--text-muted); transition: color 0.25s; }
+.upload-zone:hover .upload-icon svg { color: var(--accent); }
+
+.upload-title {
+  font-size: 15px; font-weight: 500;
+  color: var(--text-mid);
+  margin-bottom: 6px;
+}
+.upload-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.upload-sub span {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* image preview */
+.preview-box {
+  display: none;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 16px;
+  border: 1px solid var(--border);
+}
+.preview-box.visible { display: block; }
+.preview-box img {
+  width: 100%; max-height: 280px;
+  object-fit: cover; display: block;
+}
+.preview-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(7,17,31,0.7) 0%, transparent 50%);
+  display: flex; align-items: flex-end;
+  padding: 16px;
+}
+.preview-name {
+  font-size: 13px; color: rgba(255,255,255,0.7);
+  display: flex; align-items: center; gap: 6px;
+}
+.preview-remove {
+  position: absolute; top: 12px; right: 12px;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: rgba(248,113,113,0.15);
+  border: 1px solid rgba(248,113,113,0.3);
+  color: #f87171;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 16px;
+}
+.preview-remove:hover { background: rgba(248,113,113,0.3); }
+
+/* ─── SEO PREVIEW ─── */
+.seo-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 14px;
+}
+.seo-label {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 12px;
+}
+.seo-url { font-size: 12px; color: var(--success); margin-bottom: 4px; }
+.seo-title-preview {
+  font-size: 17px; color: #7ab3f7; font-weight: 500;
+  margin-bottom: 5px; line-height: 1.3;
+  word-break: break-word;
+}
+.seo-desc-preview { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+
+/* ─── DIVIDER ─── */
+.section-divider {
+  display: flex; align-items: center; gap: 16px;
+  margin: 36px 0 32px;
+  color: var(--text-muted);
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+}
+.section-divider::before, .section-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* ─── SUBMIT ROW ─── */
+.submit-row {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 14px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+.submit-row-left {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.bfy-btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 13px 26px;
+  border-radius: 10px;
+  font-family: var(--sans);
+  font-size: 14px; font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s;
+  border: none; outline: none;
+  letter-spacing: 0.2px;
+  text-decoration: none;
+}
+
+.bfy-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+}
+.bfy-btn-ghost:hover {
+  border-color: rgba(180,200,240,0.3);
+  color: var(--text);
+  background: rgba(255,255,255,0.04);
+}
+
+.bfy-btn-draft {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+}
+.bfy-btn-draft:hover {
+  border-color: rgba(59,111,212,0.35);
+  color: var(--text);
+  background: var(--accent-soft);
+}
+
+.bfy-btn-publish {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 18px var(--accent-glow);
+  padding: 13px 36px;
+}
+.bfy-btn-publish:hover {
+  background: #2a58b8;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(59,111,212,0.45);
+}
+.bfy-btn-publish:active { transform: translateY(0); }
+
+/* publish spinner */
+.bfy-btn-publish .btn-spinner {
+  display: none;
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.bfy-btn-publish.loading .btn-spinner { display: block; }
+.bfy-btn-publish.loading .btn-text { display: none; }
+
+/* ─── WRITING TIPS SIDEBAR ─── */
+.tips-panel {
+  margin-top: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  animation: slideUp 0.7s 0.25s cubic-bezier(0.22,1,0.36,1) both;
+}
+.tips-header {
+  padding: 16px 24px;
+  background: rgba(59,111,212,0.07);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer;
+}
+.tips-header h3 {
+  font-family: var(--display);
+  font-size: 14px; font-weight: 700;
+  color: var(--text);
+  flex: 1;
+}
+.tips-toggle {
+  color: var(--text-muted);
+  transition: transform 0.25s;
+}
+.tips-panel.open .tips-toggle { transform: rotate(180deg); }
+
+.tips-body {
+  display: none;
+  padding: 20px 24px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+.tips-panel.open .tips-body { display: grid; }
+
+.tip-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px;
+  background: var(--surface2);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.tip-icon {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border-radius: 7px;
+  background: var(--accent-soft);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.tip-text h4 { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.tip-text p  { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+/* ─── ANIMATIONS ─── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── TOAST ─── */
+.toast-wrap {
+  position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+  display: flex; flex-direction: column; gap: 10px;
+  pointer-events: none;
+}
+.toast {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  font-size: 14px; color: var(--text);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  pointer-events: all;
+  animation: toastIn 0.35s cubic-bezier(0.22,1,0.36,1);
+  max-width: 320px;
+}
+.toast.out { animation: toastOut 0.3s ease forwards; }
+.toast-icon { font-size: 18px; flex-shrink: 0; }
+.toast-msg { flex: 1; }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes toastOut {
+  to { opacity: 0; transform: translateY(8px); }
+}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:600px) {
+  .submit-row { flex-direction: column; align-items: stretch; }
+  .submit-row-left { justify-content: center; }
+  .bfy-btn-publish { text-align: center; justify-content: center; }
+  .steps-bar { display: none; }
+}
+
+</style>
 </head>
 
-<body style=" background: linear-gradient(to top, white,wheat) ;height: 130vh;">
-    <%- include('./partial/nav') %>
-<form style="border: 2px solid black;border-radius: 2vh; height: 80vh; width: 80vw; position: absolute; top:15vh; left:10vw;background-color: white;" action="/home/addblog" method="post" enctype="multipart/form-data" >
+<body>
+
+<!-- Ambient BG -->
+<div class="bg-ambient">
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+</div>
+
+<%- include('./partial/nav') %>
+
+<div class="page-wrap">
+
+  <!-- ── PAGE HEADER ── -->
+  <div class="page-header">
+    <div class="page-header-label">New Post</div>
+    <h1>Write Something <em>Worth Reading</em></h1>
+    <p>Share your ideas, stories, and expertise with the Blogify community.</p>
+  </div>
+
+  <!-- ── PROGRESS STEPS ── -->
+  <div class="steps-bar" id="stepsBar">
+    <div class="step active" data-step="1">
+      <div class="step-circle">1</div>
+      <span class="step-label">Basics</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" data-step="2">
+      <div class="step-circle">2</div>
+      <span class="step-label">Content</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" data-step="3">
+      <div class="step-circle">3</div>
+      <span class="step-label">Media</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" data-step="4">
+      <div class="step-circle">4</div>
+      <span class="step-label">Publish</span>
+    </div>
+  </div>
 
 
+  <!-- ══════════════ EDITOR CARD ══════════════ -->
+  <div class="editor-card">
 
-    <p class="h1 mt-1" style="text-align: center;">Add Your New Blog</p>
+    <!-- top bar -->
+    <div class="editor-topbar">
+      <div class="editor-topbar-dots">
+        <span class="dot-r"></span>
+        <span class="dot-y"></span>
+        <span class="dot-g"></span>
+      </div>
+      <span class="editor-topbar-title">blog-editor.md</span>
+      <div class="editor-topbar-save" id="autoSaveLabel">
+        <span class="save-dot"></span>
+        Draft saved
+      </div>
+    </div>
 
-    <div class="mb-3 mt-5 ms-5 me-5">
-        <label for="exampleFormControlInput1" class="form-label">Title</label>
-            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Title" name="title">
+    <div class="editor-body">
+      <form action="/home/addblog" method="post" enctype="multipart/form-data" id="blogForm">
+
+        <!-- ── 1. TITLE ── -->
+        <div class="field-group">
+          <label class="field-label">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h10M4 18h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+            Blog Title
+            <span class="field-required">Required</span>
+          </label>
+          <div class="title-wrap">
+            <input
+              type="text"
+              class="bfy-input"
+              placeholder="Write a compelling title…"
+              name="title"
+              id="titleInput"
+              maxlength="100"
+              required
+              autocomplete="off"
+            >
+            <span class="title-limit"><span id="titleCount">0</span>/100</span>
+          </div>
+
+          <!-- SEO preview -->
+          <div class="seo-card" id="seoCard" style="display:none">
+            <div class="seo-label">Search Preview</div>
+            <div class="seo-url">blogify.app › post › <span id="seoSlug">your-post-title</span></div>
+            <div class="seo-title-preview" id="seoTitle">Your Post Title Will Appear Here</div>
+            <div class="seo-desc-preview">Discover insights and perspectives in this Blogify post. Start writing to see how your content preview will look in search results.</div>
+          </div>
         </div>
-        <div class="mb-3 me-5 ms-5">
-            <label for="exampleFormControlTextarea1" class="form-label">Write Blog Here</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"
-                placeholder="Tap Here To Write Blog" name="body"></textarea>
+
+
+        <!-- ── 2. CATEGORY ── -->
+        <div class="field-group">
+          <label class="field-label">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+              <path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"
+                stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Category
+          </label>
+
+          <!-- hidden select for form submission -->
+          <select name="category" id="categorySelect" style="display:none">
+            <option value="">Select Category</option>
+            <option value="Technology">Technology</option>
+            <option value="Programming">Programming</option>
+            <option value="Travel">Travel</option>
+            <option value="Education">Education</option>
+            <option value="Lifestyle">Lifestyle</option>
+            <option value="Design">Design</option>
+            <option value="Business">Business</option>
+          </select>
+
+          <div class="cat-pills">
+            <button type="button" class="cat-pill" data-cat="">
+              <span class="cat-dot"></span> All
+            </button>
+            <button type="button" class="cat-pill" data-cat="Technology">
+              <span class="cat-dot"></span> Technology
+            </button>
+            <button type="button" class="cat-pill" data-cat="Programming">
+              <span class="cat-dot"></span> Programming
+            </button>
+            <button type="button" class="cat-pill" data-cat="Travel">
+              <span class="cat-dot"></span> Travel
+            </button>
+            <button type="button" class="cat-pill" data-cat="Education">
+              <span class="cat-dot"></span> Education
+            </button>
+            <button type="button" class="cat-pill" data-cat="Lifestyle">
+              <span class="cat-dot"></span> Lifestyle
+            </button>
+            <button type="button" class="cat-pill" data-cat="Design">
+              <span class="cat-dot"></span> Design
+            </button>
+            <button type="button" class="cat-pill" data-cat="Business">
+              <span class="cat-dot"></span> Business
+            </button>
+          </div>
         </div>
 
 
-        <div class="mb-5 ms-5 me-5 ">
-            <label for="formFile" class="form-label">Blog Pictures</label>
-            <input class="form-control" type="file" id="formFile" name="profile">
+        <!-- ── DIVIDER ── -->
+        <div class="section-divider">Content</div>
+
+
+        <!-- ── 3. BLOG BODY ── -->
+        <div class="field-group">
+          <label class="field-label" for="blogText">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+              <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 013.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Your Story
+            <span class="field-required">Required</span>
+          </label>
+
+          <textarea
+            class="bfy-textarea"
+            placeholder="Begin your story… Write with clarity, passion, and purpose."
+            name="body"
+            id="blogText"
+            required
+          ></textarea>
+
+          <div class="counter-bar">
+            <div class="counter-stats">
+              <span class="counter-stat">
+                <strong id="charCount">0</strong> chars
+              </span>
+              <span class="counter-stat">
+                <strong id="wordCount">0</strong> words
+              </span>
+            </div>
+            <div class="read-time">
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+              ~<span id="readTime">0</span> min read
+            </div>
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary ms-5">Upload Blog</button>
-
-    </form>
 
 
-        <%- include('./partial/script') %>
+        <!-- ── 4. TAGS ── -->
+        <div class="field-group">
+          <label class="field-label">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+              <path d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+            Tags
+          </label>
+
+          <div class="tag-input-wrap">
+            <input
+              type="text"
+              class="bfy-input"
+              id="tagInput"
+              placeholder="Add tags to help readers discover your post…"
+              autocomplete="off"
+            >
+            <div class="tag-hint">
+              <kbd>Enter</kbd> to add
+            </div>
+          </div>
+
+          <div class="tag-box" id="tagBox">
+            <span class="tag-count" id="tagCount" style="display:none">0/8 tags</span>
+          </div>
+
+          <!-- hidden input for tags -->
+          <input type="hidden" name="tags" id="tagsHidden">
+        </div>
+
+
+        <!-- ── DIVIDER ── -->
+        <div class="section-divider">Media</div>
+
+
+        <!-- ── 5. COVER IMAGE ── -->
+        <div class="field-group">
+          <label class="field-label">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="1.7"/>
+              <circle cx="8.5" cy="8.5" r="1.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Cover Image
+          </label>
+
+          <div class="upload-zone" id="uploadZone">
+            <input
+              class="bfy-file"
+              type="file"
+              id="imageInput"
+              name="profile"
+              accept="image/*"
+            >
+            <div class="upload-icon">
+              <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"
+                  stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="upload-title">Drop your cover image here</div>
+            <div class="upload-sub">or <span>browse to upload</span> · PNG, JPG, WEBP up to 5MB</div>
+          </div>
+
+          <div class="preview-box" id="previewBox">
+            <img id="previewImg" src="" alt="Cover preview">
+            <div class="preview-overlay">
+              <span class="preview-name">
+                <svg width="13" height="13" fill="none" viewBox="0 0 24 24">
+                  <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"
+                    stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+                <span id="fileName">image.jpg</span>
+              </span>
+            </div>
+            <button type="button" class="preview-remove" id="removeImg" title="Remove image">×</button>
+          </div>
+        </div>
+
+
+        <!-- ── SUBMIT ROW ── -->
+        <div class="submit-row">
+          <div class="submit-row-left">
+            <button type="button" class="bfy-btn bfy-btn-ghost" onclick="history.back()">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Cancel
+            </button>
+            <button type="button" class="bfy-btn bfy-btn-draft" id="saveDraftBtn">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                <path d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+                  stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Save Draft
+            </button>
+          </div>
+
+          <button type="submit" class="bfy-btn bfy-btn-publish" id="publishBtn">
+            <span class="btn-text" style="display:flex;align-items:center;gap:9px;">
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+                <path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Publish Post
+            </span>
+            <span class="btn-spinner"></span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ── WRITING TIPS PANEL ── -->
+  <div class="tips-panel" id="tipsPanel">
+    <div class="tips-header" id="tipsToggle">
+      <div class="tip-icon" style="width:28px;height:28px;font-size:14px;background:var(--accent-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;">💡</div>
+      <h3>Writing Tips for a Great Post</h3>
+      <svg class="tips-toggle" width="16" height="16" fill="none" viewBox="0 0 24 24">
+        <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="tips-body">
+      <div class="tip-item">
+        <div class="tip-icon">✍️</div>
+        <div class="tip-text">
+          <h4>Hook Early</h4>
+          <p>Open with a question, surprising stat, or bold claim to grab attention immediately.</p>
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">🎯</div>
+        <div class="tip-text">
+          <h4>One Core Idea</h4>
+          <p>Stay focused. Every paragraph should serve your single main argument or story.</p>
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">📸</div>
+        <div class="tip-text">
+          <h4>Strong Cover Image</h4>
+          <p>Posts with a cover image get 3× more engagement. Choose something vivid and relevant.</p>
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-icon">🏷️</div>
+        <div class="tip-text">
+          <h4>Smart Tags</h4>
+          <p>Use 3–5 specific tags. Niche tags often outperform broad ones for discoverability.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+
+<%- include('./partial/script') %>
+
+<script>
+(function () {
+
+  /* ── TITLE → SEO PREVIEW ── */
+  const titleInput  = document.getElementById('titleInput');
+  const titleCount  = document.getElementById('titleCount');
+  const seoCard     = document.getElementById('seoCard');
+  const seoTitle    = document.getElementById('seoTitle');
+  const seoSlug     = document.getElementById('seoSlug');
+
+  titleInput.addEventListener('input', () => {
+    const val = titleInput.value;
+    titleCount.textContent = val.length;
+    if (val.length > 0) {
+      seoCard.style.display = 'block';
+      seoTitle.textContent  = val || 'Your Post Title';
+      seoSlug.textContent   = val.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    } else {
+      seoCard.style.display = 'none';
+    }
+    updateStep();
+  });
+
+
+  /* ── CATEGORY PILLS ── */
+  const pills = document.querySelectorAll('.cat-pill');
+  const catSelect = document.getElementById('categorySelect');
+
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      pills.forEach(p => p.classList.remove('selected'));
+      pill.classList.add('selected');
+      catSelect.value = pill.dataset.cat;
+      updateStep();
+    });
+  });
+
+
+  /* ── WORD / CHAR COUNTER + READ TIME ── */
+  const blogText  = document.getElementById('blogText');
+  const charCount = document.getElementById('charCount');
+  const wordCount = document.getElementById('wordCount');
+  const readTime  = document.getElementById('readTime');
+  let autoSaveTimer;
+
+  blogText.addEventListener('input', () => {
+    const raw   = blogText.value;
+    const words = raw.trim() === '' ? 0 : raw.trim().split(/\s+/).length;
+    charCount.textContent = raw.length;
+    wordCount.textContent = words;
+    readTime.textContent  = Math.max(1, Math.round(words / 200));
+    updateStep();
+
+    // auto-save simulation
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(showAutoSave, 1500);
+  });
+
+  function showAutoSave() {
+    const label = document.getElementById('autoSaveLabel');
+    label.classList.add('visible');
+    setTimeout(() => label.classList.remove('visible'), 3000);
+  }
+
+
+  /* ── TAGS ── */
+  const tagInput   = document.getElementById('tagInput');
+  const tagBox     = document.getElementById('tagBox');
+  const tagsHidden = document.getElementById('tagsHidden');
+  const tagCountEl = document.getElementById('tagCount');
+  let tags = [];
+  const MAX_TAGS = 8;
+
+  function renderTags() {
+    tagBox.innerHTML = '';
+    tags.forEach((t, i) => {
+      const span = document.createElement('span');
+      span.className = 'tag';
+      span.innerHTML = `${t}<button class="tag-remove" data-i="${i}" title="Remove">&times;</button>`;
+      tagBox.appendChild(span);
+    });
+    if (tags.length > 0) {
+      const counter = document.createElement('span');
+      counter.className = 'tag-count';
+      counter.textContent = `${tags.length}/${MAX_TAGS}`;
+      tagBox.appendChild(counter);
+    }
+    tagsHidden.value = tags.join(',');
+    updateStep();
+  }
+
+  tagInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const val = tagInput.value.trim().replace(/,/g,'');
+      if (val && tags.length < MAX_TAGS && !tags.includes(val)) {
+        tags.push(val);
+        renderTags();
+        tagInput.value = '';
+      } else if (tags.length >= MAX_TAGS) {
+        showToast('⚠️', `Max ${MAX_TAGS} tags allowed.`);
+      }
+    }
+    if (e.key === 'Backspace' && tagInput.value === '' && tags.length > 0) {
+      tags.pop();
+      renderTags();
+    }
+  });
+
+  tagBox.addEventListener('click', (e) => {
+    if (e.target.dataset.i !== undefined) {
+      tags.splice(+e.target.dataset.i, 1);
+      renderTags();
+    }
+  });
+
+
+  /* ── IMAGE UPLOAD ── */
+  const imageInput = document.getElementById('imageInput');
+  const uploadZone = document.getElementById('uploadZone');
+  const previewBox = document.getElementById('previewBox');
+  const previewImg = document.getElementById('previewImg');
+  const fileNameEl = document.getElementById('fileName');
+  const removeBtn  = document.getElementById('removeImg');
+
+  imageInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('❌', 'Image must be under 5MB.');
+      return;
+    }
+    previewImg.src = URL.createObjectURL(file);
+    fileNameEl.textContent = file.name;
+    previewBox.classList.add('visible');
+    uploadZone.style.display = 'none';
+    updateStep();
+  });
+
+  removeBtn.addEventListener('click', () => {
+    imageInput.value = '';
+    previewImg.src = '';
+    previewBox.classList.remove('visible');
+    uploadZone.style.display = '';
+  });
+
+  // drag & drop
+  uploadZone.addEventListener('dragover',  (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+  uploadZone.addEventListener('dragleave', ()  => uploadZone.classList.remove('drag-over'));
+  uploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      imageInput.files = dt.files;
+      imageInput.dispatchEvent(new Event('change'));
+    }
+  });
+
+
+  /* ── PROGRESS STEPS ── */
+  function updateStep() {
+    const hasTitle = titleInput.value.trim().length > 0;
+    const hasCat   = catSelect.value !== '';
+    const hasBody  = blogText.value.trim().length > 0;
+    const hasMedia = previewBox.classList.contains('visible');
+
+    const steps = document.querySelectorAll('.step');
+    const complete = [hasTitle && hasCat, hasBody, hasTags(), hasMedia];
+    let activeIdx = 0;
+    complete.forEach((done, i) => {
+      if (done) activeIdx = i + 1;
+    });
+
+    steps.forEach((s, i) => {
+      s.classList.remove('active', 'done');
+      if (i < activeIdx)      s.classList.add('done');
+      else if (i === activeIdx) s.classList.add('active');
+    });
+    // update done circles to checkmarks
+    document.querySelectorAll('.step.done .step-circle').forEach(c => {
+      if (c.textContent !== '✓') c.textContent = '✓';
+    });
+    document.querySelectorAll('.step:not(.done) .step-circle').forEach(c => {
+      const s = c.closest('.step');
+      const idx = [...document.querySelectorAll('.step')].indexOf(s) + 1;
+      if (c.textContent === '✓') c.textContent = idx;
+    });
+  }
+
+  function hasTags() { return tags.length > 0; }
+
+
+  /* ── PUBLISH BUTTON LOADING ── */
+  document.getElementById('blogForm').addEventListener('submit', function (e) {
+    const btn = document.getElementById('publishBtn');
+    if (!titleInput.value.trim()) { e.preventDefault(); showToast('❌', 'Title is required.'); return; }
+    if (!blogText.value.trim())   { e.preventDefault(); showToast('❌', 'Blog content is required.'); return; }
+    btn.classList.add('loading');
+    btn.disabled = true;
+  });
+
+
+  /* ── SAVE DRAFT ── */
+  document.getElementById('saveDraftBtn').addEventListener('click', () => {
+    const data = {
+      title:    titleInput.value,
+      body:     blogText.value,
+      category: catSelect.value,
+      tags:     tags,
+    };
+    localStorage.setItem('bfy_draft', JSON.stringify(data));
+    showToast('💾', 'Draft saved locally.');
+    showAutoSave();
+  });
+
+  // restore draft
+  try {
+    const draft = JSON.parse(localStorage.getItem('bfy_draft') || 'null');
+    if (draft && draft.title) {
+      titleInput.value = draft.title || '';
+      blogText.value   = draft.body  || '';
+      titleInput.dispatchEvent(new Event('input'));
+      blogText.dispatchEvent(new Event('input'));
+      if (draft.tags && draft.tags.length) {
+        tags = draft.tags;
+        renderTags();
+      }
+      if (draft.category) {
+        catSelect.value = draft.category;
+        pills.forEach(p => { if (p.dataset.cat === draft.category) p.classList.add('selected'); });
+      }
+    }
+  } catch(e) {}
+
+
+  /* ── TIPS TOGGLE ── */
+  document.getElementById('tipsToggle').addEventListener('click', () => {
+    document.getElementById('tipsPanel').classList.toggle('open');
+  });
+
+
+  /* ── TOAST ── */
+  function showToast(icon, msg) {
+    const wrap = document.getElementById('toastWrap');
+    const el   = document.createElement('div');
+    el.className = 'toast';
+    el.innerHTML = `<span class="toast-icon">${icon}</span><span class="toast-msg">${msg}</span>`;
+    wrap.appendChild(el);
+    setTimeout(() => {
+      el.classList.add('out');
+      el.addEventListener('animationend', () => el.remove());
+    }, 3200);
+  }
+
+})();
+</script>
+
 </body>
-
 </html>

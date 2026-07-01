@@ -4,66 +4,1048 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        .button {
-            width: 8vw;
-            height: 3vw;
-            background-color: rgb(13, 13, 118);
-            color: white;
-            text-align: center;
-            font-size: 3vh;
-        }
-    </style>
+    <title>
+        <%= blog.blog_title %>
+    </title>
+
     <%- include('./partial/head') %>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+            rel="stylesheet">
+
+        <style>
+            :root {
+                --bg: #0d1117;
+                --bg2: #161b26;
+                --surface: #1c2333;
+                --surface2: #212840;
+                --text: #e6edf3;
+                --text-dim: #8b949e;
+                --text-faint: #4a5568;
+                --accent: #4493f8;
+                --accent-h: #6ab0ff;
+                --accent-bg: rgba(68, 147, 248, 0.10);
+                --accent-bg2: rgba(68, 147, 248, 0.06);
+                --border: rgba(68, 147, 248, 0.18);
+                --border-s: rgba(230, 237, 243, 0.08);
+                --green: #3fb950;
+                --yellow: #e3b341;
+                --red: #f85149;
+            }
+
+            *,
+            *::before,
+            *::after {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html {
+                scroll-behavior: smooth;
+            }
+
+            body {
+                background: var(--bg);
+                color: var(--text);
+                font-family: 'DM Sans', sans-serif;
+                font-weight: 300;
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            a {
+                text-decoration: none;
+                color: inherit;
+            }
+
+            /* GRAIN */
+            body::before {
+                content: '';
+                position: fixed;
+                inset: 0;
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+                pointer-events: none;
+                z-index: 9000;
+                opacity: 0.22;
+            }
+
+            /* READING PROGRESS */
+            #progressBar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 2px;
+                background: linear-gradient(90deg, var(--accent), var(--accent-h));
+                z-index: 9999;
+                width: 0%;
+                transition: width 0.08s linear;
+            }
+
+            /* SCROLL TO TOP */
+            .scroll-top {
+                position: fixed;
+                bottom: 36px;
+                right: 36px;
+                width: 44px;
+                height: 44px;
+                border: 1px solid var(--border-s);
+                background: var(--surface);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 1000;
+                opacity: 0;
+                transform: translateY(10px);
+                transition: opacity 0.3s, transform 0.3s, border-color 0.25s, background 0.25s;
+            }
+
+            .scroll-top.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .scroll-top:hover {
+                border-color: var(--accent);
+                background: var(--accent-bg);
+            }
+
+            .scroll-top svg {
+                width: 15px;
+                height: 15px;
+                color: var(--accent);
+            }
+
+            /* ── HERO ── */
+            .hero {
+                position: relative;
+                width: 100%;
+                height: min(520px, 60vw);
+                overflow: hidden;
+                opacity: 0;
+                animation: fadeIn 0.9s 0.1s forwards;
+            }
+
+            .hero img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                filter: brightness(0.45) saturate(0.8);
+                transform: scale(1.04);
+                animation: slowZoom 14s ease forwards;
+            }
+
+            @keyframes slowZoom {
+                to {
+                    transform: scale(1);
+                }
+            }
+
+            .hero-overlay {
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to bottom, rgba(13, 17, 23, 0.2) 0%, rgba(13, 17, 23, 0.85) 100%);
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                padding: 52px 8vw;
+            }
+
+            .hero-tag {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 0.65rem;
+                letter-spacing: 0.28em;
+                text-transform: uppercase;
+                color: var(--accent);
+                margin-bottom: 16px;
+            }
+
+            .hero-tag::before {
+                content: '';
+                width: 28px;
+                height: 1px;
+                background: var(--accent);
+            }
+
+            .hero h1 {
+                font-family: 'Cormorant Garamond', serif;
+                font-size: clamp(1.9rem, 4.5vw, 3.6rem);
+                font-weight: 300;
+                line-height: 1.12;
+                letter-spacing: -0.02em;
+                color: var(--text);
+                max-width: 820px;
+                opacity: 0;
+                animation: fadeUp 0.8s 0.4s forwards;
+            }
+
+            .hero-meta {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                flex-wrap: wrap;
+                margin-top: 18px;
+                font-size: 0.78rem;
+                color: var(--text-dim);
+                opacity: 0;
+                animation: fadeUp 0.8s 0.55s forwards;
+            }
+
+            .meta-chip {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 4px 12px;
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid var(--border-s);
+                border-radius: 100px;
+                backdrop-filter: blur(8px);
+                font-size: 0.72rem;
+            }
+
+            .meta-chip svg {
+                width: 12px;
+                height: 12px;
+            }
+
+            /* ── LAYOUT ── */
+            .layout {
+                display: grid;
+                grid-template-columns: 1fr 300px;
+                gap: 32px;
+                width: 90%;
+                max-width: 1200px;
+                margin: 40px auto 80px;
+            }
+
+            /* ── ARTICLE ── */
+            .article {
+                opacity: 0;
+                animation: fadeUp 0.8s 0.65s forwards;
+            }
+
+            /* ACTION BAR */
+            .action-bar {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+                margin-bottom: 36px;
+                padding-bottom: 28px;
+                border-bottom: 1px solid var(--border-s);
+            }
+
+            .act-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 9px 20px;
+                border-radius: 8px;
+                border: 1px solid var(--border-s);
+                background: var(--surface);
+                color: var(--text-dim);
+                font-family: 'DM Sans', sans-serif;
+                font-size: 0.78rem;
+                font-weight: 400;
+                cursor: pointer;
+                transition: all 0.22s;
+            }
+
+            .act-btn svg {
+                width: 14px;
+                height: 14px;
+                flex-shrink: 0;
+            }
+
+            .act-btn:hover {
+                border-color: var(--accent);
+                color: var(--text);
+                background: var(--accent-bg);
+            }
+
+            .act-btn.like-btn:hover,
+            .act-btn.like-btn.liked {
+                border-color: #f85149;
+                color: #f85149;
+                background: rgba(248, 81, 73, 0.08);
+            }
+
+            .act-btn.save-btn:hover,
+            .act-btn.save-btn.saved {
+                border-color: var(--yellow);
+                color: var(--yellow);
+                background: rgba(227, 179, 65, 0.08);
+            }
+
+            .act-btn.share-btn:hover {
+                border-color: var(--green);
+                color: var(--green);
+                background: rgba(63, 185, 80, 0.08);
+            }
+
+            .act-btn.dark-btn:hover {
+                border-color: #a78bfa;
+                color: #a78bfa;
+                background: rgba(167, 139, 250, 0.08);
+            }
+
+            .act-btn .count {
+                background: var(--accent-bg);
+                color: var(--accent);
+                padding: 1px 7px;
+                border-radius: 100px;
+                font-size: 0.7rem;
+            }
+
+            .act-btn.liked .count {
+                background: rgba(248, 81, 73, 0.15);
+                color: #f85149;
+            }
+
+            /* BLOG BODY */
+            .blog-body {
+                font-size: 1.05rem;
+                line-height: 1.95;
+                color: var(--text-dim);
+                white-space: pre-wrap;
+                letter-spacing: 0.01em;
+            }
+
+            .blog-body::first-letter {
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 4rem;
+                font-weight: 400;
+                float: left;
+                line-height: 0.75;
+                margin: 6px 12px 0 0;
+                color: var(--accent);
+            }
+
+            /* TAGS */
+            .tags {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                margin-top: 36px;
+                padding-top: 28px;
+                border-top: 1px solid var(--border-s);
+            }
+
+            .tag {
+                padding: 5px 14px;
+                border-radius: 100px;
+                border: 1px solid var(--border-s);
+                font-size: 0.72rem;
+                letter-spacing: 0.08em;
+                color: var(--text-faint);
+                transition: all 0.2s;
+            }
+
+            .tag:hover {
+                border-color: var(--accent);
+                color: var(--accent);
+                background: var(--accent-bg2);
+            }
+
+            /* ── COMMENTS ── */
+            .comments-section {
+                margin-top: 48px;
+                padding-top: 36px;
+                border-top: 1px solid var(--border-s);
+            }
+
+            .section-label {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                font-size: 0.65rem;
+                letter-spacing: 0.28em;
+                text-transform: uppercase;
+                color: var(--accent);
+                margin-bottom: 28px;
+            }
+
+            .section-label::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: var(--border-s);
+            }
+
+            .comment-form {
+                margin-bottom: 36px;
+            }
+
+            .comment-form input {
+                width: 100%;
+                padding: 14px 18px;
+                background: var(--surface);
+                border: 1px solid var(--border-s);
+                border-radius: 8px;
+                color: var(--text);
+                font-family: 'DM Sans', sans-serif;
+                font-size: 0.9rem;
+                outline: none;
+                margin-bottom: 12px;
+                transition: border-color 0.25s, background 0.25s;
+            }
+
+            .comment-form input::placeholder {
+                color: var(--text-faint);
+            }
+
+            .comment-form input:focus {
+                border-color: var(--accent);
+                background: var(--accent-bg2);
+            }
+
+            .comment-submit {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 11px 28px;
+                background: var(--accent);
+                border: none;
+                border-radius: 8px;
+                color: #fff;
+                font-family: 'DM Sans', sans-serif;
+                font-size: 0.8rem;
+                letter-spacing: 0.1em;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background 0.25s;
+            }
+
+            .comment-submit:hover {
+                background: var(--accent-h);
+            }
+
+            /* COMMENT CARDS */
+            .comment-list {
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+            }
+
+            .comment-card {
+                background: var(--bg2);
+                border: 1px solid var(--border-s);
+                border-radius: 10px;
+                padding: 20px 22px;
+                transition: border-color 0.25s;
+                opacity: 0;
+                transform: translateY(12px);
+                animation: fadeUp 0.5s forwards;
+            }
+
+            .comment-card:hover {
+                border-color: rgba(68, 147, 248, 0.25);
+            }
+
+            .comment-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 10px;
+            }
+
+            .comment-avatar {
+                width: 34px;
+                height: 34px;
+                border-radius: 50%;
+                background: var(--accent-bg);
+                border: 1px solid var(--border);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.8rem;
+                font-weight: 500;
+                color: var(--accent);
+                flex-shrink: 0;
+            }
+
+            .comment-name {
+                font-size: 0.85rem;
+                font-weight: 500;
+                color: var(--text);
+            }
+
+            .comment-time {
+                font-size: 0.7rem;
+                color: var(--text-faint);
+                margin-left: auto;
+            }
+
+            .comment-text {
+                font-size: 0.88rem;
+                line-height: 1.72;
+                color: var(--text-dim);
+            }
+
+            /* ── SIDEBAR ── */
+            .sidebar {
+                position: sticky;
+                top: 90px;
+                height: fit-content;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                opacity: 0;
+                animation: fadeUp 0.8s 0.8s forwards;
+            }
+
+            .side-card {
+                background: var(--bg2);
+                border: 1px solid var(--border-s);
+                border-radius: 10px;
+                padding: 24px;
+            }
+
+            .side-title {
+                font-size: 0.62rem;
+                letter-spacing: 0.28em;
+                text-transform: uppercase;
+                color: var(--accent);
+                margin-bottom: 18px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .side-title::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: var(--border-s);
+            }
+
+            .side-about p {
+                font-size: 0.85rem;
+                line-height: 1.75;
+                color: var(--text-dim);
+            }
+
+            /* READING PROGRESS RING */
+            .progress-ring-wrap {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 16px 0;
+            }
+
+            .progress-ring-wrap svg {
+                transform: rotate(-90deg);
+            }
+
+            .progress-ring-bg {
+                fill: none;
+                stroke: var(--border-s);
+                stroke-width: 4;
+            }
+
+            .progress-ring-fill {
+                fill: none;
+                stroke: var(--accent);
+                stroke-width: 4;
+                stroke-linecap: round;
+                stroke-dasharray: 220;
+                stroke-dashoffset: 220;
+                transition: stroke-dashoffset 0.3s ease;
+            }
+
+            .ring-label {
+                position: absolute;
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 1.3rem;
+                color: var(--text);
+            }
+
+            /* RELATED POSTS */
+            .related-post {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 12px 0;
+                border-bottom: 1px solid var(--border-s);
+                cursor: pointer;
+                transition: all 0.22s;
+            }
+
+            .related-post:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+
+            .related-post:hover .rel-title {
+                color: var(--accent);
+            }
+
+            .rel-num {
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 1.1rem;
+                color: var(--text-faint);
+                line-height: 1.1;
+                flex-shrink: 0;
+                padding-top: 1px;
+            }
+
+            .rel-title {
+                font-size: 0.84rem;
+                line-height: 1.45;
+                color: var(--text-dim);
+                transition: color 0.22s;
+            }
+
+            /* TOC */
+            .toc-list {
+                list-style: none;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .toc-item {
+                font-size: 0.82rem;
+                color: var(--text-dim);
+                padding: 6px 10px;
+                border-radius: 6px;
+                cursor: pointer;
+                border-left: 2px solid transparent;
+                transition: all 0.22s;
+            }
+
+            .toc-item:hover {
+                color: var(--accent);
+                border-left-color: var(--accent);
+                background: var(--accent-bg2);
+            }
+
+            /* DARK MODE OVERRIDE */
+            body.light {
+                --bg: #f0f4f8;
+                --bg2: #ffffff;
+                --surface: #e8edf4;
+                --text: #1a202c;
+                --text-dim: #4a5568;
+                --text-faint: #a0aec0;
+                --border-s: rgba(26, 32, 44, 0.1);
+            }
+
+            /* TOAST */
+            .toast {
+                position: fixed;
+                bottom: 90px;
+                left: 50%;
+                transform: translateX(-50%) translateY(20px);
+                background: var(--surface);
+                border: 1px solid var(--border-s);
+                color: var(--text);
+                font-size: 0.82rem;
+                padding: 10px 22px;
+                border-radius: 8px;
+                opacity: 0;
+                transition: all 0.3s;
+                z-index: 8000;
+                white-space: nowrap;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .toast.show {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+
+            .toast-dot {
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: var(--green);
+                flex-shrink: 0;
+            }
+
+            /* ANIMATIONS */
+            @keyframes fadeUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(18px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+
+            /* RESPONSIVE */
+            @media (max-width: 900px) {
+                .layout {
+                    grid-template-columns: 1fr;
+                    width: 94%;
+                }
+
+                .sidebar {
+                    position: relative;
+                    top: 0;
+                }
+
+                .hero {
+                    height: min(380px, 55vw);
+                }
+
+                .hero-overlay {
+                    padding: 36px 5vw;
+                }
+            }
+
+            @media (max-width: 600px) {
+                .hero {
+                    height: 260px;
+                }
+
+                .blog-body {
+                    font-size: 0.97rem;
+                }
+
+                .action-bar {
+                    gap: 8px;
+                }
+
+                .act-btn {
+                    padding: 8px 14px;
+                    font-size: 0.74rem;
+                }
+            }
+        </style>
 </head>
 
 <body>
+
+    <div id="progressBar"></div>
+
+    <div class="toast" id="toast">
+        <span class="toast-dot"></span>
+        <span id="toastMsg">Done!</span>
+    </div>
+
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+        aria-label="Back to top">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+        </svg>
+    </button>
+
     <%- include('./partial/nav') %>
 
-        <div>
-
-
-            <center>
+        <!-- HERO -->
+        <div class="hero">
+            <img src="/uploads/<%= blog.profile %>" alt="<%= blog.blog_title %>">
+            <div class="hero-overlay">
+                <div class="hero-tag">Featured Article</div>
                 <h1>
-                    <%=blog.blog_title %>
+                    <%= blog.blog_title %>
                 </h1>
-
-            </center>
-            <center>
-                <img src="/uploads/<%=blog.profile %>" style="width: 50px; height: 70px;">
-            </center>
-            <pre style="text-wrap: wrap; font-size: 15px;text-justify: auto; margin: 2vh 10vh;">
-                <%=blog.blog_body %>
-            </pre>
-
-        </div>
-        <form class="addcomment ms-5 me-5 mt-3 mb-5" action="/home/commentpost/<%=blog._id %>/" method="post">
-            <h3 class="ms-5">Add Comments (<%=comm.length %>)</h3>
-            <div class="form-floating mb-3 box ms-5 me-5">
-                <input type="text" class="form-control" id="floatingInput" name="Comment">
-                <label for="floatingInput">Enter Your Comment</label>
+                <div class="hero-meta">
+                    <span class="meta-chip">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Admin
+                    </span>
+                    <span class="meta-chip" id="readChip">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2" />
+                        </svg>
+                        <span id="readingTime">—</span> min read
+                    </span>
+                    <span class="meta-chip">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <span id="views">—</span> views
+                    </span>
+                </div>
             </div>
-
-            <button class="button ms-5" type="submit">ADD</button>
-        </form>
-        <div class="comments ms-5">
-            <%comm.forEach(element=> { %>
-                <h4 class="ms-5">
-                    <%=element.name  %>:
-                    <%=element.comment%>
-                </h4>
-                <% }) %>
-
         </div>
-       
-        <%- include('./partial/script') %>
-<script>
-    if ( window.history.replaceState ) {
-        window.history.replaceState( null, null, window.location.href );
-    }
-</script>
 
-    </body>
+        <!-- MAIN LAYOUT -->
+        <div class="layout">
+
+            <!-- ARTICLE -->
+            <article class="article">
+
+                <!-- ACTION BAR -->
+                <div class="action-bar">
+                    <button class="act-btn like-btn" id="likeBtn" onclick="likeBlog()">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        Like
+                        <span class="count" id="likes">0</span>
+                    </button>
+
+                    <button class="act-btn save-btn" id="saveBtn" onclick="saveBlog()">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                        </svg>
+                        Save
+                    </button>
+
+                    <button class="act-btn share-btn" onclick="shareBlog()">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                        </svg>
+                        Share
+                    </button>
+
+                    <button class="act-btn dark-btn" onclick="toggleDark()">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" id="themeIcon">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                        <span id="themeLabel">Light</span>
+                    </button>
+                </div>
+
+                <!-- BLOG CONTENT -->
+                <div class="blog-body" id="blogContent">
+                    <%= blog.blog_body %>
+                </div>
+
+                <!-- TAGS -->
+                <div class="tags">
+                    <span class="tag">Writing</span>
+                    <span class="tag">Ideas</span>
+                    <span class="tag">Opinion</span>
+                    <span class="tag">Featured</span>
+                </div>
+
+                <!-- COMMENTS -->
+                <div class="comments-section">
+                    <div class="section-label">Discussion (<%= comm.length %>)</div>
+
+                    <form action="/home/commentpost/<%= blog._id %>/" method="post" class="comment-form">
+                        <input type="text" name="Comment" placeholder="Share your thoughts…" required />
+                        <button type="submit" class="comment-submit">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+                                style="width:14px;height:14px;">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                            </svg>
+                            Post Comment
+                        </button>
+                    </form>
+
+                    <div class="comment-list">
+                        <% comm.forEach((element, i)=> { %>
+                            <div class="comment-card" style="animation-delay:<%= i * 0.07 %>s">
+                                <div class="comment-header">
+                                    <div class="comment-avatar">
+                                        <%= element.name ? element.name[0].toUpperCase() : '?' %>
+                                    </div>
+                                    <span class="comment-name">
+                                        <%= element.name %>
+                                    </span>
+                                    <span class="comment-time">Just now</span>
+                                </div>
+                                <div class="comment-text">
+                                    <%= element.comment %>
+                                </div>
+                            </div>
+                            <% }) %>
+                    </div>
+
+            </article>
+
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+
+                <!-- READING PROGRESS RING -->
+                <div class="side-card" style="text-align:center;">
+                    <div class="side-title">Progress</div>
+                    <div class="progress-ring-wrap" style="position:relative;">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle class="progress-ring-bg" cx="40" cy="40" r="35" />
+                            <circle class="progress-ring-fill" id="ringFill" cx="40" cy="40" r="35" />
+                        </svg>
+                        <span class="ring-label" id="ringLabel">0%</span>
+                    </div>
+                    <p style="font-size:0.75rem; color:var(--text-faint); margin-top:8px;">Article read</p>
+                </div>
+
+                <!-- ABOUT -->
+                <div class="side-card side-about">
+                    <div class="side-title">About The Journal</div>
+                    <p>A platform where curious minds share knowledge, ideas, and stories that move the world forward.
+                    </p>
+                </div>
+
+                <!-- TABLE OF CONTENTS (auto-generated) -->
+                <div class="side-card" id="tocCard" style="display:none;">
+                    <div class="side-title">Contents</div>
+                    <ul class="toc-list" id="tocList"></ul>
+                </div>
+
+                <!-- RELATED POSTS -->
+                <div class="side-card">
+                    <div class="side-title">Related Posts</div>
+                    <div class="related-post">
+                        <span class="rel-num">01</span>
+                        <span class="rel-title">How to start blogging in 2025</span>
+                    </div>
+                    <div class="related-post">
+                        <span class="rel-num">02</span>
+                        <span class="rel-title">Top programming tips for beginners</span>
+                    </div>
+                    <div class="related-post">
+                        <span class="rel-num">03</span>
+                        <span class="rel-title">Best Node.js practices</span>
+                    </div>
+                    <div class="related-post">
+                        <span class="rel-num">04</span>
+                        <span class="rel-title">How to build a startup from scratch</span>
+                    </div>
+                </div>
+
+            </aside>
+        </div>
+
+        <%- include('./partial/script') %>
+
+            <script>
+                /* PREVENT RESUBMIT */
+                if (window.history.replaceState) {
+                    window.history.replaceState(null, null, window.location.href);
+                }
+
+                /* READING TIME */
+                const blogContent = document.getElementById('blogContent');
+                const words = blogContent.innerText.trim().split(/\s+/).length;
+                const readTime = Math.max(1, Math.ceil(words / 200));
+                document.getElementById('readingTime').textContent = readTime;
+
+                /* VIEW COUNTER */
+                const viewKey = 'views_' + window.location.pathname;
+                let views = parseInt(localStorage.getItem(viewKey) || '0') + 1;
+                localStorage.setItem(viewKey, views);
+                document.getElementById('views').textContent = views;
+
+                /* LIKE SYSTEM */
+                const likeKey = 'likes_' + window.location.pathname;
+                const likedKey = 'liked_' + window.location.pathname;
+                let likes = parseInt(localStorage.getItem(likeKey) || '0');
+                const isLiked = localStorage.getItem(likedKey) === 'true';
+                document.getElementById('likes').textContent = likes;
+                if (isLiked) document.getElementById('likeBtn').classList.add('liked');
+
+                function likeBlog() {
+                    const btn = document.getElementById('likeBtn');
+                    if (btn.classList.contains('liked')) {
+                        likes = Math.max(0, likes - 1);
+                        localStorage.setItem(likedKey, 'false');
+                        btn.classList.remove('liked');
+                    } else {
+                        likes++;
+                        localStorage.setItem(likedKey, 'true');
+                        btn.classList.add('liked');
+                        showToast('Added to liked stories');
+                    }
+                    localStorage.setItem(likeKey, likes);
+                    document.getElementById('likes').textContent = likes;
+                }
+
+                /* SAVE */
+                function saveBlog() {
+                    const btn = document.getElementById('saveBtn');
+                    btn.classList.toggle('saved');
+                    showToast(btn.classList.contains('saved') ? 'Blog saved to your list!' : 'Removed from saved');
+                }
+
+                /* SHARE */
+                function shareBlog() {
+                    navigator.clipboard.writeText(window.location.href)
+                        .then(() => showToast('Link copied to clipboard!'))
+                        .catch(() => showToast('Copy: ' + window.location.href));
+                }
+
+                /* DARK / LIGHT TOGGLE */
+                let isLight = false;
+                function toggleDark() {
+                    isLight = !isLight;
+                    document.body.classList.toggle('light', isLight);
+                    document.getElementById('themeLabel').textContent = isLight ? 'Dark' : 'Light';
+                }
+
+                /* TOAST */
+                function showToast(msg) {
+                    const toast = document.getElementById('toast');
+                    document.getElementById('toastMsg').textContent = msg;
+                    toast.classList.add('show');
+                    setTimeout(() => toast.classList.remove('show'), 2600);
+                }
+
+                /* SCROLL: PROGRESS BAR + RING + SCROLL-TOP */
+                const ringFill = document.getElementById('ringFill');
+                const ringCircumference = 2 * Math.PI * 35;
+                ringFill.style.strokeDasharray = ringCircumference;
+                ringFill.style.strokeDashoffset = ringCircumference;
+
+                window.addEventListener('scroll', () => {
+                    const scrolled = window.scrollY;
+                    const total = document.documentElement.scrollHeight - window.innerHeight;
+                    const pct = total > 0 ? scrolled / total : 0;
+
+                    // Progress bar
+                    document.getElementById('progressBar').style.width = (pct * 100) + '%';
+
+                    // Ring
+                    ringFill.style.strokeDashoffset = ringCircumference * (1 - pct);
+                    document.getElementById('ringLabel').textContent = Math.round(pct * 100) + '%';
+
+                    // Scroll top
+                    document.getElementById('scrollTop').classList.toggle('visible', scrolled > 500);
+                });
+
+                /* AUTO TABLE OF CONTENTS */
+                const headings = blogContent.querySelectorAll('h2, h3');
+                if (headings.length > 1) {
+                    const tocCard = document.getElementById('tocCard');
+                    const tocList = document.getElementById('tocList');
+                    tocCard.style.display = 'block';
+                    headings.forEach((h, i) => {
+                        if (!h.id) h.id = 'section-' + i;
+                        const li = document.createElement('li');
+                        li.className = 'toc-item';
+                        li.textContent = h.textContent;
+                        li.style.paddingLeft = h.tagName === 'H3' ? '20px' : '10px';
+                        li.onclick = () => h.scrollIntoView({ behavior: 'smooth' });
+                        tocList.appendChild(li);
+                    });
+                }
+            </script>
+</body>
 
 </html>

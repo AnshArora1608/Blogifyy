@@ -1,11 +1,15 @@
-const express=require("express")
-const router=express.Router()
-const{signup,signin,postsignin,postsignup}=require("../controllers/signinup")
+const express = require("express")
+const router = express.Router()
 
-router.get("/signup",signup)
-router.get("/signin",signin)
-router.post("/signup",postsignup)
-router.post("/signin",postsignin)
+const { landing, signin, signup } = require("../controllers/signinup")
 
+router.get("/", landing)
 
-module.exports=router;
+// add these
+router.get("/signin", landing)
+router.get("/signup", landing)
+
+router.post("/signin", signin)
+router.post("/signup", signup)
+
+module.exports = router

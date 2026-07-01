@@ -26,6 +26,8 @@ router.get("/view/blog/:id",viewblog)
 
 
 router.post("/addblog",upload.single("profile"),post_addblog)
+
+
 router.post("/commentpost/:id",commentpost)
 
 

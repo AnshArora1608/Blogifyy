@@ -2,189 +2,1234 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About</title>
-    <%- include('./partial/head') %>
-        <style>
-            html {
-                font-family: sans-serif;
-            }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About | Blogify</title>
 
-            .page {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-direction: column;
-            }
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-            .head {
-                background: linear-gradient(to top, rgba(0, 0, 32, 0.9), rgb(0, 0, 70, 0.9), rgb(0, 0, 120, 0.9), rgb(0, 0, 70, 0.9), rgb(0, 0, 32, 0.9));
-                height: 30vh;
-                width: 100%;
-            }
+<%- include('./partial/head') %>
+<style>
 
-            .head h1 {
-                font-size: 10vh;
-                color: white;
-                text-align: center;
-                margin-top: 8vh;
-            }
+/* ─── RESET & BASE ─── */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
 
-            .start {
-                max-width: 60vw;
-                margin-top: 5vh;
-            }
+:root {
+  --ink:    #0d1117;
+  --cream:  #f0f4fb;
+  --warm:   #e6ecf7;
+  --accent: #3b6fd4;
+  --accent2:#7aa3e8;
+  --dark:   #0b1120;
+  --mid:    #4a5a7a;
+  --serif:  'Playfair Display', Georgia, serif;
+  --sans:   'DM Sans', sans-serif;
+}
 
-            .start h3 {
-                font-family: sans-serif;
-                font-size: 15px;
-                text-align: left;
-            }
+html { scroll-behavior: smooth; }
 
-            h2 {
-                font-size: 30px;
-            }
-    
-            
-            .button label {
-                position: absolute;
-                z-index: 1;
-                margin-top: 6px;
-                left: 36vw;
-                color: black;
-                pointer-events: none;
-                transition: 0.3s all ease;
-            }
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--sans);
+  overflow-x: hidden;
+}
 
-            .button input:focus~label,
-            .button input:invalid~label {
-                transform: translateY(-10px);
-                font-size: 10px;
-            }
-            
-            .button input {
-                border-radius: 5px ;
-                width: 20vw;
-                height: 8vh;
-                border: 2px solid black;
-            }
-            .button button{
-                border-radius: 5px ;
-                background:linear-gradient(to left,rgb(0, 255, 0),rgb(89, 247, 89),rgb(120, 233, 120));
-                height: 8vh;
-            }
-        </style>
+/* ─── NAV PLACEHOLDER ─── */
+.nav-placeholder {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(240,244,251,0.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(59,111,212,0.15);
+  padding: 18px 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+.nav-links { display: flex; gap: 32px; }
+.nav-links a {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mid);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--accent); }
+
+.nav-user {
+  display: flex; align-items: center; gap: 18px;
+}
+.nav-notif {
+  position: relative;
+  color: var(--mid);
+  display: flex; align-items: center;
+  transition: color 0.2s;
+  text-decoration: none;
+}
+.nav-notif:hover { color: var(--accent); }
+.notif-dot {
+  position: absolute; top: -2px; right: -2px;
+  width: 7px; height: 7px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: 1.5px solid var(--cream);
+}
+.nav-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 0 2px rgba(59,111,212,0.25);
+  transition: box-shadow 0.2s;
+  user-select: none;
+}
+.nav-avatar:hover { box-shadow: 0 0 0 3px rgba(59,111,212,0.45); }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  padding: 120px 40px 80px;
+  background: var(--dark);
+}
+
+.hero-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, #1a2d5a 0%, #0d1830 50%, #080d1a 100%);
+}
+
+/* animated grain */
+.hero-grain {
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  opacity: 0.4;
+  pointer-events: none;
+  animation: grain 0.5s steps(2) infinite;
+}
+@keyframes grain {
+  0%   { transform: translate(0,0); }
+  25%  { transform: translate(-1%,-1%); }
+  50%  { transform: translate(1%,1%); }
+  75%  { transform: translate(-1%,1%); }
+  100% { transform: translate(1%,-1%); }
+}
+
+/* floating orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.18;
+  animation: float 8s ease-in-out infinite;
+  pointer-events: none;
+}
+.orb-1 { width: 500px; height: 500px; background: #2563eb; top: -150px; left: -100px; animation-delay: 0s; }
+.orb-2 { width: 400px; height: 400px; background: #1e3a8a; bottom: -100px; right: -80px; animation-delay: -3s; }
+.orb-3 { width: 300px; height: 300px; background: #60a5fa; top: 40%; left: 60%; animation-delay: -5s; }
+@keyframes float {
+  0%,100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-30px) scale(1.05); }
+}
+
+.hero-label {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 28px;
+  opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+}
+.hero-label::before, .hero-label::after {
+  content: ''; display: block; width: 30px; height: 1px; background: var(--accent2); opacity: 0.5;
+}
+
+.hero-title {
+  position: relative;
+  font-family: var(--serif);
+  font-size: clamp(52px, 10vw, 120px);
+  font-weight: 900;
+  line-height: 0.92;
+  color: #fff;
+  letter-spacing: -3px;
+  margin-bottom: 12px;
+  opacity: 0; animation: fadeUp 0.9s 0.4s forwards;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--accent);
+  display: block;
+}
+
+.hero-rule {
+  width: 60px; height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  margin: 30px auto;
+  opacity: 0; animation: fadeUp 0.8s 0.6s forwards;
+}
+
+.hero-sub {
+  position: relative;
+  font-size: 18px; font-weight: 300;
+  color: rgba(255,255,255,0.65);
+  max-width: 560px;
+  line-height: 1.75;
+  opacity: 0; animation: fadeUp 0.9s 0.7s forwards;
+}
+
+.hero-cta {
+  position: relative;
+  margin-top: 48px;
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--accent);
+  color: #fff;
+  padding: 16px 36px;
+  border-radius: 3px;
+  font-size: 14px; font-weight: 500;
+  letter-spacing: 1px; text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s;
+  opacity: 0; animation: fadeUp 0.9s 0.9s forwards;
+}
+.hero-cta:hover {
+  background: #2a55b0;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(59,111,212,0.4);
+}
+.hero-cta svg { transition: transform 0.3s; }
+.hero-cta:hover svg { transform: translateX(4px); }
+
+.hero-scroll {
+  position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  opacity: 0; animation: fadeUp 1s 1.2s forwards;
+}
+.hero-scroll span {
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+.scroll-line {
+  width: 1px; height: 50px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%,100% { opacity: 0.3; transform: scaleY(1); }
+  50%      { opacity: 1;   transform: scaleY(1.1); }
+}
+
+/* ─── STATS BAND ─── */
+.stats-band {
+  background: var(--accent);
+  padding: 50px 60px;
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 0;
+}
+.stat {
+  flex: 1; min-width: 160px; max-width: 220px;
+  text-align: center;
+  padding: 20px 30px;
+  position: relative;
+}
+.stat + .stat::before {
+  content: '';
+  position: absolute; left: 0; top: 25%; height: 50%;
+  width: 1px;
+  background: rgba(255,255,255,0.3);
+}
+.stat-num {
+  font-family: var(--serif);
+  font-size: 52px; font-weight: 900;
+  color: #fff;
+  line-height: 1;
+  display: block;
+}
+.stat-label {
+  font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin-top: 6px;
+  display: block;
+}
+
+/* ─── SHARED LAYOUT ─── */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 60px;
+}
+
+section { padding: 100px 0; }
+
+/* ─── SECTION LABEL ─── */
+.section-label {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 3.5px; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+.section-label::before {
+  content: ''; display: block; width: 24px; height: 1px; background: currentColor;
+}
+
+.section-title {
+  font-family: var(--serif);
+  font-size: clamp(36px, 5vw, 58px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  color: var(--ink);
+}
+.section-title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+/* ─── STORY ─── */
+.story { background: var(--cream); }
+
+.story-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  margin-top: 60px;
+}
+
+.story-text p {
+  font-size: 17px;
+  line-height: 1.85;
+  color: var(--mid);
+  margin-bottom: 22px;
+}
+.story-text p strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.story-image {
+  position: relative;
+}
+.story-image-inner {
+  border-radius: 4px;
+  overflow: hidden;
+  aspect-ratio: 4/5;
+  background: linear-gradient(135deg, #0d1830, #1e3a8a, #2563eb);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.story-image-inner::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.story-image-quote {
+  position: absolute; bottom: -24px; left: -24px;
+  background: var(--ink);
+  color: #fff;
+  padding: 28px 32px;
+  max-width: 280px;
+  border-radius: 4px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.5;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+}
+.story-image-quote cite {
+  display: block;
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-top: 10px;
+}
+
+/* ─── FEATURES ─── */
+.features-section { background: var(--warm); }
+
+.features-header {
+  max-width: 620px;
+  margin-bottom: 70px;
+}
+.features-header .section-title { margin-bottom: 20px; }
+.features-header p {
+  font-size: 17px;
+  color: var(--mid);
+  line-height: 1.7;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+}
+
+.feat-card {
+  background: var(--cream);
+  padding: 48px 36px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.35s;
+  cursor: default;
+}
+.feat-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s;
+}
+.feat-card:hover { background: #fff; }
+.feat-card:hover::before { transform: scaleX(1); }
+
+.feat-icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, var(--accent), #e8a55a);
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 28px;
+  font-size: 22px;
+  transition: transform 0.3s;
+}
+.feat-card:hover .feat-icon { transform: scale(1.1) rotate(-3deg); }
+
+.feat-num {
+  position: absolute; top: 36px; right: 36px;
+  font-family: var(--serif);
+  font-size: 72px; font-weight: 900;
+  color: rgba(0,0,0,0.04);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.feat-card h4 {
+  font-family: var(--serif);
+  font-size: 22px; font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 14px;
+  line-height: 1.2;
+}
+.feat-card p {
+  font-size: 15px;
+  color: var(--mid);
+  line-height: 1.7;
+}
+
+/* ─── BELIEFS ─── */
+.beliefs-section { background: var(--cream); }
+
+.beliefs-grid {
+  display: grid;
+  grid-template-columns: 5fr 4fr;
+  gap: 80px;
+  align-items: start;
+  margin-top: 60px;
+}
+
+.beliefs-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
+
+.belief-item {
+  display: flex;
+  gap: 28px;
+  padding: 32px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  align-items: flex-start;
+  transition: all 0.3s;
+  cursor: default;
+}
+.belief-item:hover .belief-num { color: var(--accent); }
+.belief-item:hover { padding-left: 12px; }
+
+.belief-num {
+  font-family: var(--serif);
+  font-size: 13px; font-weight: 700;
+  color: rgba(0,0,0,0.18);
+  transition: color 0.3s;
+  flex-shrink: 0;
+  padding-top: 3px;
+  min-width: 28px;
+}
+
+.belief-content h4 {
+  font-size: 17px; font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.belief-content p {
+  font-size: 15px;
+  color: var(--mid);
+  line-height: 1.65;
+}
+
+.beliefs-visual {
+  position: sticky; top: 100px;
+}
+.beliefs-card {
+  background: var(--dark);
+  border-radius: 4px;
+  padding: 50px 42px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.beliefs-card::before {
+  content: '"';
+  position: absolute;
+  top: -40px; left: 24px;
+  font-family: var(--serif);
+  font-size: 220px; font-weight: 900;
+  color: rgba(200,135,58,0.12);
+  line-height: 1;
+  pointer-events: none;
+}
+.beliefs-card-quote {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-style: italic;
+  line-height: 1.45;
+  margin-bottom: 24px;
+  position: relative;
+}
+.beliefs-card-author {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.beliefs-img {
+  margin-top: 24px;
+  border-radius: 4px;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+  background: linear-gradient(135deg, #0d1830, #1a3a7a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px;
+}
+
+/* ─── TEAM ─── */
+.team-section { background: var(--warm); }
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 60px;
+}
+
+.team-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--cream);
+  transition: transform 0.35s, box-shadow 0.35s;
+}
+.team-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+}
+
+.team-avatar {
+  aspect-ratio: 1;
+  background: linear-gradient(135deg, #2c1a0a, var(--accent));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 56px;
+  overflow: hidden;
+  position: relative;
+}
+.team-avatar::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.3), transparent);
+}
+
+.team-info { padding: 28px 28px 32px; }
+.team-name {
+  font-family: var(--serif);
+  font-size: 22px; font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.team-role {
+  font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.team-bio {
+  font-size: 14px;
+  color: var(--mid);
+  line-height: 1.65;
+}
+
+/* ─── NEWSLETTER ─── */
+.newsletter {
+  background: #080d1a;
+  padding: 120px 60px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.newsletter::before {
+  content: 'BLOGIFY';
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  font-family: var(--serif);
+  font-size: clamp(100px, 22vw, 280px);
+  font-weight: 900;
+  color: rgba(255,255,255,0.025);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+.nl-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.12;
+  pointer-events: none;
+}
+.nl-orb-1 { width: 500px; height: 500px; background: #2563eb; top: -200px; left: -150px; }
+.nl-orb-2 { width: 400px; height: 400px; background: #1e3a8a; bottom: -150px; right: -100px; }
+
+.nl-inner { position: relative; max-width: 620px; margin: 0 auto; }
+
+.nl-label {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 3.5px; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+.nl-label::before, .nl-label::after {
+  content: ''; display: block; width: 20px; height: 1px; background: currentColor;
+}
+
+.nl-title {
+  font-family: var(--serif);
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  margin-bottom: 20px;
+}
+.nl-title em { font-style: italic; color: var(--accent); display: block; }
+
+.nl-sub {
+  font-size: 17px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.7;
+  margin-bottom: 50px;
+}
+
+.nl-form {
+  display: flex; gap: 0; max-width: 480px; margin: 0 auto;
+}
+
+.nl-input-wrap { flex: 1; position: relative; }
+
+.nl-input {
+  width: 100%;
+  padding: 20px 22px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-right: none;
+  border-radius: 3px 0 0 3px;
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 15px;
+  outline: none;
+  transition: background 0.25s, border-color 0.25s;
+}
+.nl-input::placeholder { color: rgba(255,255,255,0.3); }
+.nl-input:focus {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(200,135,58,0.4);
+}
+
+.nl-btn {
+  padding: 20px 32px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 0 3px 3px 0;
+  font-family: var(--sans);
+  font-size: 14px; font-weight: 500;
+  letter-spacing: 1px; text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.25s, transform 0.25s;
+}
+.nl-btn:hover {
+  background: #2a55b0;
+  transform: translateX(2px);
+}
+
+.nl-note {
+  margin-top: 18px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.5px;
+}
+
+/* ─── MEMBER CTA ─── */
+.member-cta-row {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 14px;
+  margin-bottom: 48px;
+}
+
+.member-btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 15px 28px;
+  border-radius: 4px;
+  font-family: var(--sans);
+  font-size: 14px; font-weight: 500;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+  transition: all 0.25s;
+}
+.member-btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(59,111,212,0.35);
+}
+.member-btn-primary:hover {
+  background: #2a55b0;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(59,111,212,0.45);
+}
+.member-btn-secondary {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.14);
+}
+.member-btn-secondary:hover {
+  background: rgba(255,255,255,0.14);
+  transform: translateY(-2px);
+}
+.member-btn-ghost {
+  color: var(--accent2);
+  font-size: 14px;
+  padding: 15px 10px;
+  letter-spacing: 0.5px;
+}
+.member-btn-ghost:hover { color: #fff; }
+
+.member-stats-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 28px 40px;
+  flex-wrap: wrap;
+}
+.mem-stat {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0 36px;
+}
+.mem-stat-val {
+  font-family: var(--serif);
+  font-size: 36px; font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.mem-stat-key {
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+.mem-stat-divider {
+  width: 1px; height: 48px;
+  background: rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+/* ─── FOOTER ─── */
+.footer {
+  background: #080604;
+  padding: 40px 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.footer-logo {
+  font-family: var(--serif);
+  font-size: 18px; font-weight: 900;
+  color: rgba(255,255,255,0.4);
+}
+.footer-text {
+  font-size: 12px;
+  color: rgba(255,255,255,0.2);
+  letter-spacing: 0.5px;
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.75s ease, transform 0.75s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 960px) {
+  .nav-placeholder { padding: 16px 24px; }
+  .container { padding: 0 24px; }
+  .story-grid, .beliefs-grid { grid-template-columns: 1fr; gap: 50px; }
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .team-grid { grid-template-columns: repeat(2, 1fr); }
+  .story-image-quote { position: static; margin-top: 20px; max-width: 100%; }
+  .beliefs-visual { position: static; }
+  .stats-band { padding: 40px 20px; }
+  .newsletter { padding: 80px 24px; }
+  .footer { flex-direction: column; gap: 12px; text-align: center; padding: 32px 24px; }
+}
+
+@media (max-width: 600px) {
+  .features-grid { grid-template-columns: 1fr; }
+  .team-grid { grid-template-columns: 1fr; }
+  .nl-form { flex-direction: column; }
+  .nl-input { border-right: 1px solid rgba(255,255,255,0.12); border-radius: 3px; }
+  .nl-btn { border-radius: 3px; }
+  .stat-num { font-size: 40px; }
+  .nav-links { display: none; }
+}
+
+/* ─── COUNTER ANIMATION ─── */
+.count-animated { display: inline-block; }
+
+</style>
 </head>
 
 <body>
-    <%- include('./partial/nav') %>
-        <div class="page">
-            <div class="head">
-                <h1>
-                    About
-                </h1>
-            </div>
-            <div class="start">
-                <h3>Want to turn your blog into a business that thrives? You’re in the right place.</h3>
 
-                <h3> Blogging has always required a diverse set of skills.</h3>
+<!-- NAV DEMO -->
+ 
+<%- include('./partial/nav') %>
 
-                <h3>But in today’s competitive landscape we have to adapt to the reality that blogging is about more
-                    than just writing & publishing blog posts.</h3>
 
-                <h3>One minute you’re a social media manager, the next you’re building an ecommerce store so your
-                    readers can buy merch. Then, you’re building a sales funnel that allows you to sell products while
-                    you sleep.</h3>
+<!-- ════════════════════════════════
+     HERO
+════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grain"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
 
-                <h3>Then there’s filming and editing videos, etc.</h3>
+  <span class="hero-label">Our Story</span>
 
-                <h3>That’s a lot. </h3>
-            </div>
-            <div class="start">
-                <h2>
-                    A 360 degree approach to blogging
-                </h2>
-                <h3>
-                    Here’s the good news:
-                </h3>
-                <h3>
-                    On our award winning blog, you’ll find everything you need to know to develop this diverse skill
-                    set.
-                </h3>
-                <h3>
-                    We cover content marketing, social media, SEO, ecommerce, marketing & sales, conversion rate
-                    optimization, WordPress, website building, and more.
-                </h3>
-                <h3>
-                    You’ll also find plenty of insights to help you monetize your content.
-                </h3>
-                <h3>
-                    We’ll help you leverage every advantage available to save time and automate your blogging business.
-                    Not in a lazy way. But in a smart way that keeps the human element (YOU) at the core of your
-                    blogging strategy.
-                </h3>
-                <h3>
-                    All of our content is actionable, meticulously crafted by industry experts and read by millions of
-                    bloggers & content creators each year.
-                </h3>
-                <h3>
-                    Whether you want to start a blog, launch a YouTube channel, or publish a course – you’ll find the
-                    resources to help you.
-                </h3>
-                <h3>
-                    Want to get started? Head over to our blog and start reading.
-                </h3>
-            </div>
-            <div class="start">
-                <h2>The beliefs Blogging Wizard is founded upon</h2>
-                <ul>
-                    <li>
-                        We don’t have to be great writers or super smart to become successful content creators or start
-                        a business. But if we adopt a learning mindset and put in plenty of time and hard work – we can
-                        accomplish anything.
-                    </li>
-                    <li>
-                        We don’t have to be chained to our business 24/7 to make them successful (but be prepared to
-                        work a lot to get it off the ground) – by working smarter, we can ensure we spend more time with
-                        those we love.
-                    </li>
-                    <li>
-                        Countless institutions focus on driving people apart but blogging can bring us together.
-                    </li>
-                    <li>
-                        As content creators, we can become genuine change agents and make a difference one person at a
-                        time – right from our armchair. Like Gandhi says, “Be the change you wish to see in the world.”
-                    </li>
-                </ul>
-                <h3>
-                    We’ve been featured or mentioned by:
-                </h3>
-                <img src="/images/about.png" alt="" style="width: 56vw;">
-                <h3 class="mt-3">Sign up for our newsletter to get our latest posts and 15+ exclusive guides/checklists
-                    that you won’t find on the blog.</h3>
-            </div>
-            <div
-                style="margin-top:10vh ; height: 60vh; width: 100%; background:linear-gradient(to top, rgba(0, 0, 32, 0.9), rgb(0, 0, 70, 0.9), rgb(0, 0, 120, 0.9), rgb(0, 0, 70, 0.9), rgb(0, 0, 32, 0.9)); color: white; display: flex; align-items: center; justify-content: center; flex-direction: column;">
-                <h3>
-                    Unlock The Bloging Wizard Vault
-                </h3>
-                <div class="start">
+  <h1 class="hero-title">
+    We Help
+    <em>Bloggers</em>
+    Thrive.
+  </h1>
 
-                    <h3>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum, dignissimos!</h3>
-                    <h3 style="text-align: center;">Lorem ipsum dolor sit amet consectetur</h3>
-                </div>
-                <div class="button">
-                    <input type="email">
-                    <label for="email">Email</label>
-                    <button>Get Started</button>
-                </div>
+  <div class="hero-rule"></div>
 
-            </div>
+  <p class="hero-sub">
+    Learn, grow, and build your blogging business with the right tools, strategies, and community.
+  </p>
+
+  <a href="#story" class="hero-cta">
+    Discover Our Story
+    <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════
+     STATS BAND
+════════════════════════════════ -->
+<div class="stats-band">
+  <div class="stat">
+    <span class="stat-num count-animated" data-target="50">0</span><span class="stat-num" style="font-size:36px">K+</span>
+    <span class="stat-label">Active Bloggers</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num count-animated" data-target="120">0</span><span class="stat-num" style="font-size:36px">+</span>
+    <span class="stat-label">Expert Guides</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num count-animated" data-target="4">0</span><span class="stat-num" style="font-size:36px">M+</span>
+    <span class="stat-label">Posts Published</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num count-animated" data-target="98">0</span><span class="stat-num" style="font-size:36px">%</span>
+    <span class="stat-label">Satisfaction Rate</span>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════
+     STORY
+════════════════════════════════ -->
+<section class="story" id="story">
+  <div class="container">
+
+    <div class="story-grid">
+
+      <div class="story-text reveal">
+        <span class="section-label">Who We Are</span>
+        <h2 class="section-title" style="margin-bottom:32px">
+          Born from a <em>passion</em> for words.
+        </h2>
+
+        <p>
+          Want to turn your blog into a business that <strong>truly thrives?</strong> You're in the right place. We started Blogify because we believed creators deserved more than just a publishing platform.
+        </p>
+        <p>
+          Blogging today requires more than writing posts. You might be managing social media, optimizing SEO, launching digital products, or building a community around your ideas.
+        </p>
+        <p>
+          Blogify helps creators develop every skill needed to succeed in the modern digital world — from the first word to the first dollar.
+        </p>
+      </div>
+
+      <div class="story-image reveal reveal-delay-2">
+        <div class="story-image-inner">
+          <span style="font-size:80px; position:relative; z-index:1;">✍️</span>
+        </div>
+        <div class="story-image-quote">
+          "Great content doesn't just get read — it changes minds, builds trust, and drives action."
+          <cite>— Blogify Manifesto</cite>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════
+     FEATURES
+════════════════════════════════ -->
+<section class="features-section">
+  <div class="container">
+
+    <div class="features-header reveal">
+      <span class="section-label">What We Offer</span>
+      <h2 class="section-title">A 360° approach<br>to <em>blogging.</em></h2>
+      <p style="margin-top:20px">Our platform provides everything bloggers need to build, grow, and monetize their content — all in one place.</p>
+    </div>
+
+    <div class="features-grid">
+
+      <div class="feat-card reveal">
+        <div class="feat-icon">📝</div>
+        <span class="feat-num">01</span>
+        <h4>Content Marketing</h4>
+        <p>Create content that attracts, engages, and converts readers into loyal fans.</p>
+      </div>
+
+      <div class="feat-card reveal reveal-delay-1">
+        <div class="feat-icon">🔍</div>
+        <span class="feat-num">02</span>
+        <h4>SEO Optimization</h4>
+        <p>Improve search rankings and drive a steady stream of organic traffic to your posts.</p>
+      </div>
+
+      <div class="feat-card reveal reveal-delay-2">
+        <div class="feat-icon">🌱</div>
+        <span class="feat-num">03</span>
+        <h4>Audience Growth</h4>
+        <p>Build loyal communities across your blog and social platforms that keep coming back.</p>
+      </div>
+
+      <div class="feat-card reveal reveal-delay-3">
+        <div class="feat-icon">💰</div>
+        <span class="feat-num">04</span>
+        <h4>Monetization</h4>
+        <p>Turn your content into consistent income with smart, proven strategies that scale.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════
+     BELIEFS
+════════════════════════════════ -->
+<section class="beliefs-section">
+  <div class="container">
+
+    <div class="reveal">
+      <span class="section-label">Our Philosophy</span>
+      <h2 class="section-title">Things we <em>believe</em><br>to be true.</h2>
+    </div>
+
+    <div class="beliefs-grid">
+
+      <ul class="beliefs-list">
+
+        <li class="belief-item reveal">
+          <span class="belief-num">01</span>
+          <div class="belief-content">
+            <h4>Imperfect writers can build perfect businesses.</h4>
+            <p>You don't need to be a perfect writer to build a successful blog. Voice, consistency, and value matter far more than flawless prose.</p>
+          </div>
+        </li>
+
+        <li class="belief-item reveal reveal-delay-1">
+          <span class="belief-num">02</span>
+          <div class="belief-content">
+            <h4>Consistency beats talent, every time.</h4>
+            <p>The bloggers who win are the ones who keep showing up. Consistency and a growth mindset outperform raw talent in the long run.</p>
+          </div>
+        </li>
+
+        <li class="belief-item reveal reveal-delay-2">
+          <span class="belief-num">03</span>
+          <div class="belief-content">
+            <h4>Blogging bridges the world.</h4>
+            <p>A single post can connect people across continents. Blogging remains one of the most powerful forms of human communication.</p>
+          </div>
+        </li>
+
+        <li class="belief-item reveal reveal-delay-3">
+          <span class="belief-num">04</span>
+          <div class="belief-content">
+            <h4>Creators have the power to change minds.</h4>
+            <p>Content creators hold a unique influence. Used thoughtfully, your words can inspire real, lasting change in the world.</p>
+          </div>
+        </li>
+
+      </ul>
+
+      <div class="beliefs-visual reveal reveal-delay-2">
+        <div class="beliefs-card">
+          <p class="beliefs-card-quote">
+            "The best bloggers aren't just writers — they're teachers, entrepreneurs, and community builders."
+          </p>
+          <span class="beliefs-card-author">— Blogify Core Values</span>
         </div>
 
+        <div class="beliefs-img">
+          📚
+        </div>
+      </div>
 
-        <%- include('./partial/script') %>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════
+     TEAM
+════════════════════════════════ -->
+<section class="team-section">
+  <div class="container">
+
+    <div class="reveal" style="text-align:center; max-width:560px; margin:0 auto 60px;">
+      <span class="section-label">The Team</span>
+      <h2 class="section-title">The people behind <em>Blogify.</em></h2>
+    </div>
+
+    <div class="team-grid">
+
+      <div class="team-card reveal">
+        <div class="team-avatar" style="background:linear-gradient(135deg,#0d1830,#3b6fd4)">🧑‍💻</div>
+        <div class="team-info">
+          <div class="team-name">Alex Rivera</div>
+          <div class="team-role">Co-Founder & CEO</div>
+          <p class="team-bio">Former journalist turned tech founder. Alex believes every creator deserves a platform that works as hard as they do.</p>
+        </div>
+      </div>
+
+      <div class="team-card reveal reveal-delay-1">
+        <div class="team-avatar" style="background:linear-gradient(135deg,#0d2040,#1e6fa8)">👩‍🎨</div>
+        <div class="team-info">
+          <div class="team-name">Maya Chen</div>
+          <div class="team-role">Head of Design</div>
+          <p class="team-bio">Maya crafts every pixel of Blogify with intention. She believes great design is invisible — you only notice it when it's missing.</p>
+        </div>
+      </div>
+
+      <div class="team-card reveal reveal-delay-2">
+        <div class="team-avatar" style="background:linear-gradient(135deg,#12103a,#4040b0)">🧑‍🏫</div>
+        <div class="team-info">
+          <div class="team-name">Jordan Walsh</div>
+          <div class="team-role">Content Strategist</div>
+          <p class="team-bio">Jordan has helped 500+ bloggers grow their audience from zero. His frameworks are the backbone of Blogify's learning curriculum.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════
+     MEMBER CTA
+════════════════════════════════ -->
+<section class="newsletter">
+  <div class="nl-orb nl-orb-1"></div>
+  <div class="nl-orb nl-orb-2"></div>
+
+  <div class="nl-inner reveal">
+    <span class="nl-label">Member Access</span>
+    <h2 class="nl-title">
+      Your journey
+      <em>starts here.</em>
+    </h2>
+    <p class="nl-sub">
+      You're part of the Blogify community. Dive into your dashboard, explore curated resources, or publish your next post — everything is ready for you.
+    </p>
+
+    <div class="member-cta-row">
+      <a href="#" class="member-btn member-btn-primary">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Go to Dashboard
+      </a>
+      <a href="#" class="member-btn member-btn-secondary">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Write a New Post
+      </a>
+      <a href="#" class="member-btn member-btn-ghost">
+        Browse Resources →
+      </a>
+    </div>
+
+    <div class="member-stats-row">
+      <div class="mem-stat">
+        <span class="mem-stat-val">12</span>
+        <span class="mem-stat-key">Posts Written</span>
+      </div>
+      <div class="mem-stat-divider"></div>
+      <div class="mem-stat">
+        <span class="mem-stat-val">4.8K</span>
+        <span class="mem-stat-key">Total Reads</span>
+      </div>
+      <div class="mem-stat-divider"></div>
+      <div class="mem-stat">
+        <span class="mem-stat-val">238</span>
+        <span class="mem-stat-key">Followers</span>
+      </div>
+      <div class="mem-stat-divider"></div>
+      <div class="mem-stat">
+        <span class="mem-stat-val">Pro</span>
+        <span class="mem-stat-key">Your Plan</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+  <span class="footer-logo">Blogify</span>
+  <span class="footer-text">© 2025 Blogify. All rights reserved.</span>
+</footer>
+
+
+<script>
+// ─── SCROLL REVEAL ───
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.12 });
+reveals.forEach(el => observer.observe(el));
+
+// ─── COUNTER ───
+const counters = document.querySelectorAll('.count-animated');
+let countersStarted = false;
+
+function startCounters() {
+  if (countersStarted) return;
+  countersStarted = true;
+  counters.forEach(counter => {
+    const target = +counter.dataset.target;
+    const duration = 1600;
+    const step = target / (duration / 16);
+    let current = 0;
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) { current = target; clearInterval(timer); }
+      counter.textContent = Math.floor(current);
+    }, 16);
+  });
+}
+
+const statsObserver = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) startCounters();
+}, { threshold: 0.5 });
+document.querySelector('.stats-band') && statsObserver.observe(document.querySelector('.stats-band'));
+
+// ─── SMOOTH SCROLL ───
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+});
+
+// ─── NAV SHRINK ON SCROLL ───
+const nav = document.querySelector('.nav-placeholder');
+window.addEventListener('scroll', () => {
+  nav.style.padding = window.scrollY > 40 ? '12px 60px' : '18px 60px';
+  nav.style.transition = 'padding 0.3s';
+});
+
+// ─── NEWSLETTER SUBMIT ───
+document.querySelector('.nl-btn').addEventListener('click', function() {
+  const input = document.querySelector('.nl-input');
+  if (input.value.includes('@')) {
+    this.textContent = '✓ Subscribed!';
+    this.style.background = '#2ecc71';
+    input.value = '';
+    setTimeout(() => { this.textContent = 'Get Access'; this.style.background = ''; }, 3000);
+  } else {
+    input.style.borderColor = 'rgba(231,76,60,0.5)';
+    setTimeout(() => { input.style.borderColor = ''; }, 1500);
+  }
+});
+</script>
+
 </body>
-
 </html>

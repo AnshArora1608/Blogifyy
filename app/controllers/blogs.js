@@ -1,5 +1,5 @@
 const { blogs } = require("../models/blogs")
-const comments=require("../models/comment")
+const comments = require("../models/comment")
 const user = require("../models/user")
 const { parseJwt } = require("../service/auth")
 
@@ -23,30 +23,30 @@ async function post_addblog(req, res) {
         user_id,
         by,
     })
-    
+
     res.redirect("/home/home")
 }
 
-async function commentpost(req,res){
-    const blog_id=req.params.id
-    const comment=req.body.Comment
+async function commentpost(req, res) {
+    const blog_id = req.params.id
+    const comment = req.body.Comment
     const token = req.cookies?.uid
     const tokenvalue = parseJwt(token)
-    const email=tokenvalue.email
+    const email = tokenvalue.email
     const check_User = await user.findOne({ email })
-    const blog=await blogs.findById(blog_id)
-    const name=check_User.name
+    const blog = await blogs.findById(blog_id)
+    const name = check_User.name
     const created_by = tokenvalue.id
-    if(!comment) return res.send("bhag")
-comments.create({
-    comment,
-    created_by,
-    name,
-    blog_id
-})
+    if (!comment) return res.send("bhag")
+    await comments.create({
+        comment,
+        created_by,
+        name,
+        blog_id
+    })
     // console.log(blog_id)
-    const comm= await comments.find({blog_id})
-    return res.render("blog",{check_User,blog,comm})
+    const comm = await comments.find({ blog_id })
+    return res.render("blog", { check_User, blog, comm })
 }
 
-module.exports = { post_addblog,commentpost}
+module.exports = { post_addblog, commentpost }

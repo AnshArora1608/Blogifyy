@@ -1,33 +1,669 @@
-<nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark" style="z-index: 2; background: #141E30;
-background: linear-gradient(
-  to right,
-  #000b1f,#102032);">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="/home/home">Blogify</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-      aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/home/addblog">Add Blogs</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/home/about">About</a>
-        </li>
-        <li class="nav-item" style="margin-left: 60vw;">
-          <img src="/images/user.png" alt="<%=check_User.name  %>" style="width: 40px;height: 40px;">
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <%=check_User.name %>
+<%
+/* ─── Blogify Enhanced Navbar Partial ─── */
+%>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --nav-bg:      #07111f;
+    --nav-border:  rgba(59, 111, 212, 0.18);
+    --accent:      #3b6fd4;
+    --accent-glow: rgba(59, 111, 212, 0.35);
+    --accent-soft: rgba(59, 111, 212, 0.12);
+    --text-bright: #f0f4ff;
+    --text-muted:  rgba(180, 200, 240, 0.55);
+    --text-mid:    rgba(180, 200, 240, 0.8);
+    --dropdown-bg: #0d1c30;
+    --hover-row:   rgba(59, 111, 212, 0.08);
+  }
+
+  /* ── NAVBAR SHELL ── */
+  .bfy-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    justify-content: space-between;
+
+    background: linear-gradient(90deg, rgba(7,17,31,0.97) 0%, rgba(10,22,42,0.97) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--nav-border);
+
+    font-family: 'DM Sans', sans-serif;
+
+    /* slide-in on load */
+    animation: navSlideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes navSlideIn {
+    from { transform: translateY(-64px); opacity: 0; }
+    to   { transform: translateY(0);     opacity: 1; }
+  }
+
+  /* subtle shimmer line along top */
+  .bfy-nav::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.6;
+  }
+
+  /* ── LOGO ── */
+  .bfy-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--text-bright);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+  }
+  .bfy-logo:hover { opacity: 0.85; color: var(--text-bright); text-decoration: none; }
+
+  .bfy-logo-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow), 0 0 16px var(--accent-glow);
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 6px var(--accent-glow); }
+    50%      { box-shadow: 0 0 14px var(--accent-glow), 0 0 28px rgba(59,111,212,0.2); }
+  }
+
+  /* ── CENTER LINKS ── */
+  .bfy-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+    margin: 0; padding: 0;
+  }
+
+  .bfy-links .bfy-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    color: var(--text-mid);
+    text-decoration: none;
+    transition: color 0.2s, background 0.2s;
+    white-space: nowrap;
+  }
+  .bfy-links .bfy-link svg {
+    opacity: 0.6;
+    transition: opacity 0.2s, transform 0.25s;
+    flex-shrink: 0;
+  }
+  .bfy-links .bfy-link:hover {
+    color: var(--text-bright);
+    background: var(--accent-soft);
+    text-decoration: none;
+  }
+  .bfy-links .bfy-link:hover svg { opacity: 1; transform: scale(1.12); }
+
+  /* active link */
+  .bfy-links .bfy-link.active {
+    color: var(--text-bright);
+  }
+  .bfy-links .bfy-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 20%; right: 20%;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  /* ── WRITE BUTTON ── */
+  .bfy-write-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 6px;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.2px;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 12px rgba(59,111,212,0.28);
+    white-space: nowrap;
+  }
+  .bfy-write-btn:hover {
+    background: #2a58b8;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(59,111,212,0.42);
+    color: #fff;
+    text-decoration: none;
+  }
+  .bfy-write-btn:active { transform: translateY(0); }
+
+  /* ── RIGHT CLUSTER ── */
+  .bfy-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* icon buttons */
+  .bfy-icon-btn {
+    position: relative;
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+  }
+  .bfy-icon-btn:hover {
+    background: var(--accent-soft);
+    color: var(--text-bright);
+    text-decoration: none;
+  }
+
+  .bfy-notif-dot {
+    position: absolute;
+    top: 7px; right: 7px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 1.5px solid var(--nav-bg);
+    box-shadow: 0 0 6px var(--accent-glow);
+  }
+
+  /* divider */
+  .bfy-divider {
+    width: 1px; height: 24px;
+    background: var(--nav-border);
+    margin: 0 6px;
+  }
+
+  /* ── USER DROPDOWN ── */
+  .bfy-user {
+    position: relative;
+  }
+
+  .bfy-user-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 10px 5px 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    user-select: none;
+  }
+  .bfy-user-trigger:hover { background: var(--accent-soft); }
+
+  .bfy-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(59,111,212,0.4);
+    display: block;
+    transition: border-color 0.2s;
+    flex-shrink: 0;
+  }
+  .bfy-user-trigger:hover .bfy-avatar { border-color: var(--accent); }
+
+  .bfy-user-name {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-mid);
+    transition: color 0.2s;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .bfy-user-trigger:hover .bfy-user-name { color: var(--text-bright); }
+
+  .bfy-chevron {
+    color: var(--text-muted);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+
+  /* dropdown panel */
+  .bfy-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 210px;
+    background: var(--dropdown-bg);
+    border: 1px solid var(--nav-border);
+    border-radius: 10px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03);
+    overflow: hidden;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px) scale(0.98);
+    transform-origin: top right;
+    transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+  }
+  .bfy-user.open .bfy-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+  }
+  .bfy-user.open .bfy-chevron { transform: rotate(180deg); }
+
+  /* dropdown header */
+  .bfy-dd-header {
+    padding: 16px 18px 14px;
+    border-bottom: 1px solid var(--nav-border);
+  }
+  .bfy-dd-uname {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-bright);
+    margin-bottom: 2px;
+  }
+  .bfy-dd-role {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+  }
+
+  /* dropdown items */
+  .bfy-dd-body { padding: 6px; }
+
+  .bfy-dd-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    color: var(--text-mid);
+    text-decoration: none;
+    transition: background 0.18s, color 0.18s;
+    cursor: pointer;
+  }
+  .bfy-dd-item svg { opacity: 0.55; flex-shrink: 0; transition: opacity 0.18s; }
+  .bfy-dd-item:hover {
+    background: var(--hover-row);
+    color: var(--text-bright);
+    text-decoration: none;
+  }
+  .bfy-dd-item:hover svg { opacity: 1; }
+
+  /* danger item */
+  .bfy-dd-item.danger { color: rgba(248, 113, 113, 0.75); }
+  .bfy-dd-item.danger:hover { background: rgba(248, 113, 113, 0.1); color: #f87171; }
+  .bfy-dd-item.danger svg { opacity: 0.6; }
+
+  .bfy-dd-sep {
+    height: 1px;
+    background: var(--nav-border);
+    margin: 4px 6px;
+  }
+
+  /* ── MOBILE TOGGLE ── */
+  .bfy-toggler {
+    display: none;
+    flex-direction: column;
+    gap: 4.5px;
+    padding: 8px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+  }
+  .bfy-toggler span {
+    display: block;
+    width: 22px; height: 2px;
+    border-radius: 2px;
+    background: var(--text-mid);
+    transition: all 0.3s;
+  }
+  .bfy-toggler.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .bfy-toggler.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .bfy-toggler.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* ── MOBILE MENU ── */
+  .bfy-mobile-menu {
+    display: none;
+    position: fixed;
+    top: 64px; left: 0; right: 0;
+    background: linear-gradient(180deg, #0a1628 0%, #07111f 100%);
+    border-bottom: 1px solid var(--nav-border);
+    padding: 12px 16px 20px;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 999;
+
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.25s, transform 0.25s;
+  }
+  .bfy-mobile-menu.open {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .bfy-mob-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-mid);
+    text-decoration: none;
+    transition: background 0.18s, color 0.18s;
+  }
+  .bfy-mob-link:hover, .bfy-mob-link.active {
+    background: var(--accent-soft);
+    color: var(--text-bright);
+    text-decoration: none;
+  }
+
+  .bfy-mob-sep { height: 1px; background: var(--nav-border); margin: 6px 0; }
+
+  .bfy-mob-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: var(--accent-soft);
+    border-radius: 8px;
+    margin-bottom: 6px;
+  }
+  .bfy-mob-user img {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 2px solid rgba(59,111,212,0.4);
+    object-fit: cover;
+  }
+  .bfy-mob-user-name {
+    font-size: 14px; font-weight: 500;
+    color: var(--text-bright);
+  }
+  .bfy-mob-user-role {
+    font-size: 11px; color: var(--text-muted);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .bfy-links, .bfy-write-btn, .bfy-divider, .bfy-icon-btn { display: none; }
+    .bfy-toggler { display: flex; }
+    .bfy-user-name { display: none; }
+    .bfy-chevron { display: none; }
+  }
+
+  /* page offset for fixed nav */
+  body { padding-top: 64px; }
+</style>
+
+
+<!-- ═══════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════ -->
+<nav class="bfy-nav">
+
+  <!-- LOGO -->
+  <a class="bfy-logo" href="/home/home">
+    <span class="bfy-logo-dot"></span>
+    Blogify
+  </a>
+
+  <!-- CENTER LINKS -->
+  <ul class="bfy-links">
+    <li>
+      <a class="bfy-link" href="/home/home">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+          <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Home
+      </a>
+    </li>
+    <li>
+      <a class="bfy-link active" href="/home/addblog">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+          <path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        Add Blog
+      </a>
+    </li>
+    <li>
+      <a class="bfy-link" href="/home/about">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+          <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        About
+      </a>
+    </li>
+  </ul>
+
+  <!-- RIGHT CLUSTER -->
+  <div class="bfy-right">
+
+    <!-- Write CTA -->
+    <a href="/home/addblog" class="bfy-write-btn">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+        <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 013.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+          stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Write
+    </a>
+
+    <!-- Notifications -->
+    <a href="#" class="bfy-icon-btn" title="Notifications">
+      <svg width="17" height="17" fill="none" viewBox="0 0 24 24">
+        <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+          stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="bfy-notif-dot"></span>
+    </a>
+
+    <div class="bfy-divider"></div>
+
+    <!-- User Dropdown -->
+    <div class="bfy-user" id="bfyUser">
+      <div class="bfy-user-trigger" id="bfyUserTrigger">
+        <img class="bfy-avatar" src="/images/user.png" alt="<%= check_User.name %>">
+        <span class="bfy-user-name"><%= check_User.name %></span>
+        <svg class="bfy-chevron" width="14" height="14" fill="none" viewBox="0 0 24 24">
+          <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <div class="bfy-dropdown" id="bfyDropdown">
+
+        <!-- Header -->
+        <div class="bfy-dd-header">
+          <div class="bfy-dd-uname"><%= check_User.name %></div>
+          <div class="bfy-dd-role">Member · Blogify</div>
+        </div>
+
+        <!-- Items -->
+        <div class="bfy-dd-body">
+
+          <a class="bfy-dd-item" href="/user/profile">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+              <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            My Profile
           </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/user/signin">logout</a></li>
-          </ul>
-        </li>
-      </ul>
+
+          <a class="bfy-dd-item" href="/user/myblogs">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+              <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v8a2 2 0 01-2 2z"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M17 20v-8H7v8M7 4v4h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            My Blogs
+          </a>
+
+          <a class="bfy-dd-item" href="/home/addblog">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+              <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 013.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Write New Post
+          </a>
+
+          <a class="bfy-dd-item" href="/user/settings">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+              <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="1.6"/>
+            </svg>
+            Settings
+          </a>
+
+          <div class="bfy-dd-sep"></div>
+
+          <a class="bfy-dd-item danger" href="/user/signin">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+              <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Sign Out
+          </a>
+
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- MOBILE TOGGLE -->
+  <button class="bfy-toggler" id="bfyToggler" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+
 </nav>
+
+
+<!-- MOBILE MENU -->
+<div class="bfy-mobile-menu" id="bfyMobile">
+
+  <div class="bfy-mob-user">
+    <img src="/images/user.png" alt="<%= check_User.name %>">
+    <div>
+      <div class="bfy-mob-user-name"><%= check_User.name %></div>
+      <div class="bfy-mob-user-role">Member · Blogify</div>
+    </div>
+  </div>
+
+  <a class="bfy-mob-link" href="/home/home">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+      <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Home
+  </a>
+  <a class="bfy-mob-link active" href="/home/addblog">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+      <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 013.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Add Blog
+  </a>
+  <a class="bfy-mob-link" href="/home/about">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+      <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    About
+  </a>
+
+  <div class="bfy-mob-sep"></div>
+
+  <a class="bfy-mob-link" href="/user/profile">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+      <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    My Profile
+  </a>
+  <a class="bfy-mob-link" href="/user/settings">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+      <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z"
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Settings
+  </a>
+
+  <div class="bfy-mob-sep"></div>
+
+  <a class="bfy-mob-link" href="/user/signin" style="color:rgba(248,113,113,0.8)">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+      <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+        stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Sign Out
+  </a>
+
+</div>
+
+
+<script>
+(function () {
+
+  /* ── User dropdown ── */
+  const userEl    = document.getElementById('bfyUser');
+  const trigger   = document.getElementById('bfyUserTrigger');
+
+  trigger.addEventListener('click', function (e) {
+    e.stopPropagation();
+    userEl.classList.toggle('open');
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!userEl.contains(e.target)) userEl.classList.remove('open');
+  });
+
+  /* ── Mobile toggle ── */
+  const toggler = document.getElementById('bfyToggler');
+  const mobile  = document.getElementById('bfyMobile');
+
+  toggler.addEventListener('click', function () {
+    toggler.classList.toggle('open');
+    mobile.classList.toggle('open');
+  });
+
+  /* ── Scroll: deepen background ── */
+  const nav = document.querySelector('.bfy-nav');
+  window.addEventListener('scroll', function () {
+    if (window.scrollY > 10) {
+      nav.style.background = 'linear-gradient(90deg, rgba(7,17,31,0.99) 0%, rgba(10,22,42,0.99) 100%)';
+      nav.style.boxShadow  = '0 4px 24px rgba(0,0,0,0.4)';
+    } else {
+      nav.style.background = 'linear-gradient(90deg, rgba(7,17,31,0.97) 0%, rgba(10,22,42,0.97) 100%)';
+      nav.style.boxShadow  = 'none';
+    }
+  }, { passive: true });
+
+})();
+</script>

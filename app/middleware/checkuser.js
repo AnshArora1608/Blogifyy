@@ -1,20 +1,22 @@
 const { get_user } = require("../service/auth.js")
 
-
 async function restricttologedinuseronly(req, res, next) {
-    
+
     const userID = req.cookies?.uid
-    // console.log(req)
+
     if (!userID) {
-        return res.redirect("/user/signup")
+        return res.redirect("/")
     }
-    const user =get_user(userID)
-    if (!user) {
-        res.redirect("/user/signup")
+
+    const userData = get_user(userID)
+
+    if (!userData) {
+        return res.redirect("/")
     }
-    req.user=user
-    // console.log(req.user)
+
+    req.user = userData
+
     next()
 }
 
-module.exports=restricttologedinuseronly
+module.exports = restricttologedinuseronly
