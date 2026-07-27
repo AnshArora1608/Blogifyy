@@ -1,13 +1,16 @@
+require("dotenv").config()
 const path = require("path")
 const express = require("express")
 const app = express()
-const PORT = 890
+const PORT = process.env.PORT||890
 const staticroute = require("./app/routes/staticroutes")
 const SignInUpRoute = require('./app/routes/signinuproutes.js')
 const mongoose = require("mongoose")
 const cookieparser = require("cookie-parser")
 
-mongoose.connect('mongodb://127.0.0.1:27017/Blogify').then(console.log("mb connected"))
+mongoose.connect(process.env.MONGODB_URI)
+.then(()=>console.log("mb connected"))
+.catch((err)=>console.log(err))
 
 
 const restricttologedinuseronly = require("./app/middleware/checkuser")
