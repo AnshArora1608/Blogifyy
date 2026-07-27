@@ -14,7 +14,7 @@ async function post_addblog(req, res) {
     // console.log(by)
     const blog_title = req.body.title
     const blog_body = req.body.body
-    const profile = req.file.filename
+    const profile =  req.file.path
     // console.log(token,tokenvalue,id,title,body,filename)
     blogs.create({
         blog_title,
