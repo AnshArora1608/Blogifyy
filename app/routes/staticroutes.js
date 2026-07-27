@@ -25,3 +25,5 @@ router.post("/commentpost/:id",commentpost)
 
 
 
+
+module.exports=router
