@@ -4,19 +4,12 @@ const {homepage,addblogs,viewblog,about}=require("../controllers/staticroutes.js
 const {post_addblog,commentpost}=require("../controllers/blogs.js")
 
 
+const multer = require("multer");
+const { storage } = require("../config/cloudinary"); // adjust path if needed
 
-const multer  = require('multer')
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, './public/uploads')
-    },
-    filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-      cb(null, file.fieldname + '-' + uniqueSuffix +".jpg")
-    }
-  })
-  
-  const upload = multer({ storage: storage })
+const upload = multer({ storage });
+
+module.exports = upload;
 
 
 router.get("/about",about)
@@ -32,5 +25,3 @@ router.post("/commentpost/:id",commentpost)
 
 
 
-
-module.exports=router
