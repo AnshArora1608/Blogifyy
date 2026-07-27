@@ -706,7 +706,7 @@
             <!-- HERO CARD -->
             <article class="card-hero card-anim">
                 <div class="card-img">
-                    <img src="/uploads/<%= blog[0].profile %>" alt="<%= blog[0].blog_title %>">
+                    <img src="<%= blog[0].profile %>" alt="<%= blog[0].blog_title %>">
                     <div class="featured-badge">Featured Story</div>
                 </div>
                 <div class="hero-panel">
@@ -749,7 +749,7 @@
                             data-title="<%= element.blog_title.toLowerCase() %>"
                             onclick="window.location='/home/view/blog/<%= element._id %>'">
                             <div class="img-wrap">
-                                <img src="/uploads/<%= element.profile %>" alt="<%= element.blog_title %>">
+                                <img src="<%= element.profile %>" alt="<%= element.blog_title %>">
                                 <span class="card-index">0<%= idx + 2 %></span>
                             </div>
                             <div class="card-body">
@@ -782,7 +782,7 @@
                             data-title="<%= element.blog_title.toLowerCase() %>"
                             onclick="window.location='/home/view/blog/<%= element._id %>'">
                             <div class="img-wrap">
-                                <img src="/uploads/<%= element.profile %>" alt="<%= element.blog_title %>">
+                                <img src="<%= element.profile %>" alt="<%= element.blog_title %>">
                             </div>
                             <div class="card-list-body">
                                 <div>
